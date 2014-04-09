@@ -134,7 +134,7 @@ function lovebird.onRequest(req, client)
   -- Handle input
   if req.body then
     local str = unescape(req.body:match(".-=(.*)"))
-    xpcall(function() loadstring(str)() end, lovebird.onError)
+    xpcall(function() assert(loadstring(str))() end, lovebird.onError)
   end
   -- Generate page
   local t = {}
