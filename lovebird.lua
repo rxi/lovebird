@@ -153,15 +153,15 @@ function lovebird.onConnect(client)
   req.addr, req.port = client:getsockname()
   req.request = client:receive()
   req.method, req.url, req.proto = req.request:match(requestptn)
-  req.header = {}
+  req.headers = {}
   while 1 do
     local line = client:receive()
     if not line or #line == 0 then break end
     local k, v = line:match("(.-):%s*(.*)$")
-    req.header[k] = v
+    req.headers[k] = v
   end
-  if req.header["Content-Length"] then
-    req.body = client:receive(req.header["Content-Length"])
+  if req.headers["Content-Length"] then
+    req.body = client:receive(req.headers["Content-Length"])
   end
   -- Handle request; get data to send
   local data, index = lovebird.onRequest(req), 0
