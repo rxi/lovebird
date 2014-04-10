@@ -269,7 +269,7 @@ function lovebird.update(dt)
   if client then
     client:settimeout(2)
     local addr = client:getsockname()
-    if find(lovebird.whitelist, addr) then 
+    if not lovebird.whitelist or find(lovebird.whitelist, addr) then 
       xpcall(function() lovebird.onConnect(client) end, lovebird.onError)
     else
       trace("got non-whitelisted connection attempt: ", addr)
