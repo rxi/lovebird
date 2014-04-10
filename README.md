@@ -3,8 +3,8 @@ A debug console for [LÖVE](http://love2d.org) which runs in the browser.
 
 
 ## Usage
-Drop the [lovebird.lua](#) file into an existing project and place the
-following line at the top of your `love.update()` function:
+Drop the [lovebird.lua](lovebird.lua?raw=1) file into an existing project and
+place the following line at the top of your `love.update()` function:
 ```lua
 require("lovebird").update()
 ```
@@ -23,7 +23,7 @@ a variable when it is required:
 ```lua
 lovebird = require "lovebird"
 ```
-Any configuration variables should be set before lovebird.update()` is called.
+Any configuration variables should be set before `lovebird.update()` is called.
 
 ### lovebird.port
 The port which lovebird listens for connections on. By default this is `8000`
@@ -49,7 +49,7 @@ This is `0.5` by default.
 
 ### lovebird.page
 The HTML page template which is used when lovebird is accessed by the browser.
-The default is too long to list here, see [lovebird.lua](#).
+The default is too long to list here, see [lovebird.lua](lovebird.lua).
 
 ### lovebird.print(...)
 Prints its arguments to lovebird's console. If `lovebird.wrapprint` is set to
