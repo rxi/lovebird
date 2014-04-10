@@ -31,8 +31,8 @@ The port which lovebird listens for connections on. By default this is `8000`
 ### lovebird.whitelist
 A table of hosts which lovebird will accept connections from. Any connection
 made from a host which is not on the whitelist is logged and closed
-immediately. If `lovebird.whitelist` is set to nil, all connections are
-accepted. The default is `{ "127.0.0.1", "localhost" }`
+immediately. If `lovebird.whitelist` is set to nil then all connections are
+accepted. The default is `{ "127.0.0.1", "localhost" }`.
 
 ### lovebird.wrapprint
 Whether lovebird should wrap the `print()` function or not. If this is true
@@ -46,6 +46,10 @@ buffer. By default this is `200`.
 ### lovebird.refreshrate
 The rate in seconds which the output buffer is refreshed on lovebird's page.
 This is `0.5` by default.
+
+### lovebird.page
+The HTML page template which is used when lovebird is accessed by the browser.
+The default is too long to list here, see [lovebird.lua](#).
 
 ### lovebird.print(...)
 Prints its arguments to lovebird's console. If `lovebird.wrapprint` is set to
