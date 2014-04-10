@@ -3,7 +3,7 @@ socket = require "socket"
 local lovebird = { _version = "0.0.1" }
 
 lovebird.inited = false
-lovebird.overrideprint = true
+lovebird.wrapprint = true
 lovebird.host = "*"
 lovebird.port = 8000
 lovebird.whitelist = { "127.0.0.1", "localhost" }
@@ -135,7 +135,7 @@ function lovebird.init()
   lovebird.server = assert(socket.bind(lovebird.host, lovebird.port))
   lovebird.addr, lovebird.port = lovebird.server:getsockname()
   lovebird.server:settimeout(0)
-  if lovebird.overrideprint then
+  if lovebird.wrapprint then
     local oldprint = print
     print = function(...)
       oldprint(...)
