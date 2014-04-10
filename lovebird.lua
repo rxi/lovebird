@@ -77,6 +77,9 @@ local pagetemplate = [[
     #title a:hover {
       color: #FFFFFF;
     }
+    #version {
+      font-size: 10px;
+    }
     #status {
       float: right;
       font-size: 14px;
@@ -109,6 +112,7 @@ local pagetemplate = [[
     <div id="header">
       <div id="title">
         <a href="https://github.com/rxi/lovebird">lovebird</a>
+        <span id="version"><?lua echo(lovebird._version) ?></span>
       </div>
       <div id="status">connected</div>
     </div>
