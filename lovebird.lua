@@ -12,8 +12,9 @@ socket = require "socket"
 local lovebird = { _version = "0.0.1" }
 
 lovebird.inited = false
-lovebird.wrapprint = true
 lovebird.host = "*"
+lovebird.wrapprint = true
+lovebird.timestamp = true
 lovebird.port = 8000
 lovebird.whitelist = { "127.0.0.1", "localhost" }
 lovebird.maxlines = 200
@@ -60,6 +61,9 @@ local pagetemplate = [[
     }
     form {
       margin-bottom: 0px;
+    }
+    .timestamp {
+      color: #909090;
     }
     #header {
       background: #101010;
@@ -190,6 +194,9 @@ end
 
 function lovebird.print(...)
   local str = table.concat(map({...}, tostring), " ")
+  if lovebird.timestamp then
+    str = os.date('<span class="timestamp">[%H:%M:%S]</span> ') .. str
+  end
   table.insert(lovebird.lines, str)
   if #lovebird.lines > lovebird.maxlines then
     table.remove(lovebird.lines, 1)
