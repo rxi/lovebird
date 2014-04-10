@@ -141,12 +141,17 @@ local pagetemplate = [[
         var req = new XMLHttpRequest();
         req.onreadystatechange = function() {
           if (req.readyState != 4) return;
-          var div = document.getElementById("output"); 
-          if (div.innerHTML != req.responseText) {
-            div.innerHTML = req.responseText;
-            scrolloutput();
+          var status;
+          if (req.status == 200) {
+            status = "connected";
+            var div = document.getElementById("output"); 
+            if (div.innerHTML != req.responseText) {
+              div.innerHTML = req.responseText;
+              scrolloutput();
+            }
+          } else {
+            status = "disconnected";
           }
-          var status = req.status == 200 ? "connected" : "disconnected";
           var div = document.getElementById("status"); 
           if (div.innerHTML != status) div.innerHTML = status;
         }
