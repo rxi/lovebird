@@ -37,21 +37,71 @@ end
 
 
 local pagetemplate = [[
+<!doctype html>
 <html>
   <head>
+  <meta http-equiv="x-ua-compatible" content="IE=Edge"/>
   <title>lovebird</title>
   <style>
-    #input { width: 600px }
-    #output { width: 600px; height: 400px; overflow-y: scroll }
+    body { 
+      margin: 0px;
+      font-family: helvetica, verdana, sans;
+      background: #FFFFFF;
+    }
+    form {
+      margin-bottom: 0px;
+    }
+    #header {
+      background: #101010;
+      height: 25px;
+      color:#F0F0F0;
+      padding: 8px
+    }
+    #title {
+      float: left;
+      font-size: 20px;
+    }
+    #status {
+      float: right;
+      font-size: 14px;
+      padding-top: 4px;
+    }
+    #content {
+      position: absolute;
+      margin: 12px;
+      top: 40px; bottom: 0px; left: 0px; right: 0px;
+      background: #F0F0F0;
+      border: 1px solid #E0E0E0;
+    }
+    #input {
+      position: absolute;
+      margin: 10px;
+      bottom: 0px; left: 0px; right: 0px;
+    }
+    #inputbox {
+      width: 100%;
+    }
+    #output {
+      overflow-y: scroll;
+      position: absolute;
+      margin: 10px;
+      top: 0px; bottom: 36px; left: 0px; right: 0px;
+    }
   </style>
   </head>
   <body>
-    <div id="output">
-      <?lua echo(lovebird.buffer) ?>
+    <div id="header">
+      <div id="title">lovebird</div>
+      <div id="status">connected</div>
     </div>
-    <form method="post">
-      <input id="input" name="input" type="text" autofocus></input>
-    </form>
+    <div id="content">
+      <div id="output"> <?lua echo(lovebird.buffer) ?> </div>
+      <div id="input">
+        <form method="post">
+          <input id="inputbox" name="input" type="text" autofocus></input>
+        </form>
+      </div>
+    </div>
     <script>
       /* Scroll output to bottom */
       var scrolloutput = function() {
@@ -72,6 +122,7 @@ local pagetemplate = [[
         }
         req.open("GET", "/buffer", true);
         req.send();
+        console.log(req);
       }
       setInterval(refresh, <?lua echo(lovebird.refreshrate) ?> * 1000);
     </script>
