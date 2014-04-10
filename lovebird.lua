@@ -263,7 +263,7 @@ function lovebird.onConnect(client)
 end
 
 
-function lovebird.update(dt)
+function lovebird.update()
   if not lovebird.inited then lovebird.init() end 
   local client = lovebird.server:accept()
   if client then
