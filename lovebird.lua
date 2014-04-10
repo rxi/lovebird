@@ -63,12 +63,19 @@ local pagetemplate = [[
     #header {
       background: #101010;
       height: 25px;
-      color:#F0F0F0;
+      color: #F0F0F0;
       padding: 8px
     }
     #title {
       float: left;
       font-size: 20px;
+    }
+    #title a {
+      color: #F0F0F0;
+      text-decoration: none;
+    }
+    #title a:hover {
+      color: #FFFFFF;
     }
     #status {
       float: right;
@@ -100,7 +107,9 @@ local pagetemplate = [[
   </head>
   <body>
     <div id="header">
-      <div id="title">lovebird</div>
+      <div id="title">
+        <a href="https://github.com/rxi/lovebird">lovebird</a>
+      </div>
       <div id="status">connected</div>
     </div>
     <div id="content">
