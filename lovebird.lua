@@ -128,10 +128,12 @@ local pagetemplate = [[
             div.innerHTML = req.responseText;
             scrolloutput();
           }
+          var status = req.status == 200 ? "connected" : "disconnected";
+          var div = document.getElementById("status"); 
+          if (div.innerHTML != status) div.innerHTML = status;
         }
         req.open("GET", "/buffer", true);
         req.send();
-        console.log(req);
       }
       setInterval(refresh, <?lua echo(lovebird.refreshrate) ?> * 1000);
     </script>
