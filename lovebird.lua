@@ -119,7 +119,7 @@ local pagetemplate = [[
         <a href="https://github.com/rxi/lovebird">lovebird</a>
         <span id="version"><?lua echo(lovebird._version) ?></span>
       </div>
-      <div id="status">connected</div>
+      <div id="status">connected &#9679;</div>
     </div>
     <div id="content">
       <div id="output"> <?lua echo(lovebird.buffer) ?> </div>
@@ -143,14 +143,14 @@ local pagetemplate = [[
           if (req.readyState != 4) return;
           var status;
           if (req.status == 200) {
-            status = "connected";
+            status = "connected &#9679;";
             var div = document.getElementById("output"); 
             if (div.innerHTML != req.responseText) {
               div.innerHTML = req.responseText;
               scrolloutput();
             }
           } else {
-            status = "disconnected";
+            status = "disconnected &#9675;";
           }
           var div = document.getElementById("status"); 
           if (div.innerHTML != status) div.innerHTML = status;
