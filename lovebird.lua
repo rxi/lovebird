@@ -22,32 +22,7 @@ lovebird.refreshrate = .5
 lovebird.buffer = ""
 lovebird.lines = {}
 
-
-local loadstring = loadstring or load
-
-local map = function(t, fn)
-  local res = {}
-  for k, v in pairs(t) do res[k] = fn(v) end
-  return res
-end
-
-local find = function(t, value)
-  for k, v in pairs(t) do
-    if v == value then return k end
-  end
-end
-
-local trace = function(...)
-  print("[lovebird] " .. table.concat(map({...}, tostring), " "))
-end
-
-local unescape = function(str)
-  local f = function(x) return string.char(tonumber("0x"..x)) end
-  return (str:gsub("%+", " "):gsub("%%(..)", f))
-end
-
-
-local pagetemplate = [[
+lovebird.page = [[
 <!doctype html>
 <html>
   <head>
@@ -165,6 +140,32 @@ local pagetemplate = [[
 ]]
 
 
+
+local loadstring = loadstring or load
+
+local map = function(t, fn)
+  local res = {}
+  for k, v in pairs(t) do res[k] = fn(v) end
+  return res
+end
+
+local find = function(t, value)
+  for k, v in pairs(t) do
+    if v == value then return k end
+  end
+end
+
+local trace = function(...)
+  print("[lovebird] " .. table.concat(map({...}, tostring), " "))
+end
+
+local unescape = function(str)
+  local f = function(x) return string.char(tonumber("0x"..x)) end
+  return (str:gsub("%+", " "):gsub("%%(..)", f))
+end
+
+
+
 function lovebird.init()
   lovebird.server = assert(socket.bind(lovebird.host, lovebird.port))
   lovebird.addr, lovebird.port = lovebird.server:getsockname()
@@ -228,7 +229,7 @@ function lovebird.onRequest(req, client)
   -- Generate page
   local t = {}
   table.insert(t, "HTTP/1.1 200 OK\r\n\r\n") 
-  table.insert(t, lovebird.template(pagetemplate, { lovebird = lovebird }))
+  table.insert(t, lovebird.template(lovebird.page, { lovebird = lovebird }))
   return table.concat(t)
 end
 
