@@ -1,3 +1,12 @@
+--
+-- lovebird
+--
+-- Copyright (c) 2014, rxi
+--
+-- This library is free software; you can redistribute it and/or modify it
+-- under the terms of the MIT license. See LICENSE for details.
+--
+
 socket = require "socket"
 
 local lovebird = { _version = "0.0.1" }
