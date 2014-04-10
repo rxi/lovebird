@@ -64,7 +64,7 @@ local pagetemplate = [[
       background: #101010;
       height: 25px;
       color: #F0F0F0;
-      padding: 8px
+      padding: 9px
     }
     #title {
       float: left;
