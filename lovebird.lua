@@ -16,9 +16,10 @@ lovebird.wrapprint = true
 lovebird.host = "*"
 lovebird.port = 8000
 lovebird.whitelist = { "127.0.0.1", "localhost" }
-lovebird.maxbuffer = 20000
+lovebird.maxlines = 200
 lovebird.refreshrate = .5
 lovebird.buffer = ""
+lovebird.lines = {}
 
 
 local loadstring = loadstring or load
@@ -188,11 +189,12 @@ end
 
 
 function lovebird.print(...)
-  local str = table.concat(map({...}, tostring), " ") .. "<br>"
-  lovebird.buffer = lovebird.buffer .. str
-  if #lovebird.buffer > lovebird.maxbuffer then
-    lovebird.buffer = lovebird.buffer:sub(-lovebird.maxbuffer)
+  local str = table.concat(map({...}, tostring), " ")
+  table.insert(lovebird.lines, str)
+  if #lovebird.lines > lovebird.maxlines then
+    table.remove(lovebird.lines, 1)
   end
+  lovebird.buffer = table.concat(lovebird.lines, "<br>")
 end
 
 
