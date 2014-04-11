@@ -12,15 +12,17 @@ local socket = require "socket"
 local lovebird = { _version = "0.0.1" }
 
 lovebird.inited = false
+lovebird.buffer = ""
+lovebird.lines = {}
 lovebird.host = "*"
+
 lovebird.wrapprint = true
 lovebird.timestamp = true
+lovebird.allowhtml = true
 lovebird.port = 8000
 lovebird.whitelist = { "127.0.0.1", "localhost" }
 lovebird.maxlines = 200
 lovebird.refreshrate = .5
-lovebird.buffer = ""
-lovebird.lines = {}
 
 lovebird.page = [[
 <!doctype html>
@@ -206,6 +208,9 @@ end
 
 function lovebird.print(...)
   local str = table.concat(map({...}, tostring), " ")
+  if not lovebird.allowhtml then
+    str = str:gsub("<", "&lt;")
+  end
   if lovebird.timestamp then
     str = os.date('<span class="timestamp">[%H:%M:%S]</span> ') .. str
   end
