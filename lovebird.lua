@@ -26,6 +26,14 @@ lovebird.maxlines = 200
 lovebird.refreshrate = .5
 
 lovebird.pages["index"] = [[
+<?lua
+-- Handle console input
+if req.parsedbody.input then
+  local str = req.parsedbody.input
+  xpcall(function() assert(loadstring(str))() end, lovebird.onError)
+end
+?>
+
 <!doctype html>
 <html>
   <head>
@@ -148,7 +156,7 @@ lovebird.pages["index"] = [[
 </html>
 ]]
 
-
+lovebird.pages["buffer"] = "<?lua echo(lovebird.buffer) ?>"
 
 
 local loadstring = loadstring or load
@@ -241,22 +249,16 @@ end
 
 
 function lovebird.onRequest(req, client)
-  local head = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
-  -- Handle request for just the buffer
-  if req.url:match("buffer") then
-    return head .. lovebird.buffer
+  local page = req.parsedurl.path
+  page = page ~= "" and page or "index"
+  -- Handle "page not found"
+  if not lovebird.pages[page] then 
+    return "HTTP/1.1 404\r\nContent-Type: text/html\r\n\r\nBad page"
   end
-  -- Handle input
-  if req.parsedbody.input then
-    local str = req.parsedbody.input
-    xpcall(function() assert(loadstring(str))() end, lovebird.onError)
-  end
-  -- Generate page
-  local t = {}
-  table.insert(t, head) 
-  table.insert(t, lovebird.template(lovebird.pages.index,
-                                    { lovebird = lovebird }))
-  return table.concat(t)
+  -- Handle existent page
+  return "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" ..
+         lovebird.template(lovebird.pages[page],
+                           { lovebird = lovebird, req = req })
 end
 
 
