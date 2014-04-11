@@ -127,6 +127,20 @@ end
         return false;
       }
 
+      var getPage = function(url, onComplete, onFail) {
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function() {
+          if (req.readyState != 4) return;
+          if (req.status == 200) {
+            onComplete(req.responseText)
+          } else {
+            onFail(req.responseText)
+          }
+        }
+        req.open("GET", url + "?_=" + Math.random(), true);
+        req.send();
+      }
+
       /* Scroll output to bottom */
       var scrolloutput = function() {
         var div = document.getElementById("output"); 
@@ -136,21 +150,17 @@ end
 
       /* Refresh output buffer and status */
       var refresh = function() {
-        var req = new XMLHttpRequest();
-        req.onreadystatechange = function() {
-          if (req.readyState != 4) return;
-          if (req.status == 200) {
+        getPage("/buffer",
+          function(text) {
             updateDivContent("status", "connected &#9679;");
-            if (updateDivContent("output", req.responseText)) {
+            if (updateDivContent("output", text)) {
               scrolloutput();
             }
-          } else {
+          },
+          function(text) {
             updateDivContent("status", "disconnected &#9675;");
           }
-        }
-        /* Random used to avoid IE's caching */
-        req.open("GET", "/buffer?_=" + Math.random(), true);
-        req.send();
+        );
       }
       setInterval(refresh, <?lua echo(lovebird.refreshrate) ?> * 1000);
     </script>
