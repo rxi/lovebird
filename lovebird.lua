@@ -7,7 +7,7 @@
 -- under the terms of the MIT license. See LICENSE for details.
 --
 
-socket = require "socket"
+local socket = require "socket"
 
 local lovebird = { _version = "0.0.1" }
 
