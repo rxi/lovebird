@@ -47,6 +47,11 @@ buffer. By default this is `200`.
 The rate in seconds which the output buffer is refreshed on lovebird's page.
 This is `0.5` by default.
 
+### lovebird.allowhtml
+Whether prints should allow HTML. If this is true then any HTML which is
+printed will be rendered as HTML; if it false then all HTML is rendered as
+text. This is `true` by default.
+
 ### lovebird.page
 The HTML page template which is used when lovebird is accessed by the browser.
 The default is too long to list here, see [lovebird.lua](lovebird.lua).
