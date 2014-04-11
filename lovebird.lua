@@ -247,8 +247,8 @@ function lovebird.onRequest(req, client)
     return head .. lovebird.buffer
   end
   -- Handle input
-  if req.body then
-    local str = unescape(req.body:match(".-=(.*)"))
+  if req.parsedbody.input then
+    local str = req.parsedbody.input
     xpcall(function() assert(loadstring(str))() end, lovebird.onError)
   end
   -- Generate page
@@ -277,6 +277,13 @@ function lovebird.onConnect(client)
   end
   if req.headers["Content-Length"] then
     req.body = client:receive(req.headers["Content-Length"])
+  end
+  -- Parse body
+  req.parsedbody = {}
+  if req.body then
+    for k, v in req.body:gmatch("([^&]-)=([^&^#]*)") do
+      req.parsedbody[k] = unescape(v)
+    end
   end
   -- Parse request line's url
   req.parsedurl = lovebird.parseurl(req.url)
