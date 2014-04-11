@@ -158,7 +158,9 @@ end
 </html>
 ]]
 
-lovebird.pages["buffer"] = "<?lua echo(lovebird.buffer) ?>"
+
+lovebird.pages["buffer"] = [[ <?lua echo(lovebird.buffer) ?> ]]
+
 
 
 local loadstring = loadstring or load
@@ -229,10 +231,15 @@ function lovebird.parseurl(url)
 end
 
 
+function lovebird.htmlescape(str)
+  return str:gsub("<", "&lt;")
+end
+
+
 function lovebird.print(...)
   local str = table.concat(map({...}, tostring), " ")
   if not lovebird.allowhtml then
-    str = str:gsub("<", "&lt;")
+    str = lovebird.htmlescape(str)
   end
   if lovebird.timestamp then
     str = os.date('<span class="timestamp">[%H:%M:%S]</span> ') .. str
