@@ -111,11 +111,13 @@ end
       <div id="output"> <?lua echo(lovebird.buffer) ?> </div>
       <div id="input">
         <form method="post">
-          <input id="inputbox" name="input" type="text" autofocus></input>
+          <input id="inputbox" name="input" type="text"></input>
         </form>
       </div>
     </div>
     <script>
+      document.getElementById("inputbox").focus();
+
       var updateDivContent = function(id, content) {
         var div = document.getElementById(id); 
         if (div.innerHTML != content) {
