@@ -245,7 +245,6 @@ function lovebird.onConnect(client)
   -- Create request table
   local requestptn = "(%S*)%s*(%S*)%s*(%S*)"
   local req = {}
-  req = {}
   req.socket = client
   req.addr, req.port = client:getsockname()
   req.request = client:receive()
