@@ -12,9 +12,10 @@ local socket = require "socket"
 local lovebird = { _version = "0.0.1" }
 
 lovebird.inited = false
+lovebird.host = "*"
 lovebird.buffer = ""
 lovebird.lines = {}
-lovebird.host = "*"
+lovebird.pages = {}
 
 lovebird.wrapprint = true
 lovebird.timestamp = true
@@ -24,7 +25,7 @@ lovebird.whitelist = { "127.0.0.1", "localhost" }
 lovebird.maxlines = 200
 lovebird.refreshrate = .5
 
-lovebird.page = [[
+lovebird.pages["index"] = [[
 <!doctype html>
 <html>
   <head>
@@ -149,6 +150,7 @@ lovebird.page = [[
 
 
 
+
 local loadstring = loadstring or load
 
 local map = function(t, fn)
@@ -241,7 +243,8 @@ function lovebird.onRequest(req, client)
   -- Generate page
   local t = {}
   table.insert(t, head) 
-  table.insert(t, lovebird.template(lovebird.page, { lovebird = lovebird }))
+  table.insert(t, lovebird.template(lovebird.pages.index,
+                                    { lovebird = lovebird }))
   return table.concat(t)
 end
 
