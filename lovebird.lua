@@ -105,32 +105,38 @@ lovebird.page = [[
       </div>
     </div>
     <script>
+      var updateDivContent = function(id, content) {
+        var div = document.getElementById(id); 
+        if (div.innerHTML != content) {
+          div.innerHTML = content;
+          return true;
+        }
+        return false;
+      }
+
       /* Scroll output to bottom */
       var scrolloutput = function() {
         var div = document.getElementById("output"); 
         div.scrollTop = div.scrollHeight;
       }
       scrolloutput()
-      /* Refresh buffer output at intervals */
+
+      /* Refresh output buffer and status */
       var refresh = function() {
         var req = new XMLHttpRequest();
         req.onreadystatechange = function() {
           if (req.readyState != 4) return;
-          var status;
           if (req.status == 200) {
-            status = "connected &#9679;";
-            var div = document.getElementById("output"); 
-            if (div.innerHTML != req.responseText) {
-              div.innerHTML = req.responseText;
+            updateDivContent("status", "connected &#9679;");
+            if (updateDivContent("output", req.responseText)) {
               scrolloutput();
             }
           } else {
-            status = "disconnected &#9675;";
+            updateDivContent("status", "disconnected &#9675;");
           }
-          var div = document.getElementById("status"); 
-          if (div.innerHTML != status) div.innerHTML = status;
         }
-        req.open("GET", "/buffer", true);
+        /* Random used to avoid IE's caching */
+        req.open("GET", "/buffer?" + Math.random(), true);
         req.send();
       }
       setInterval(refresh, <?lua echo(lovebird.refreshrate) ?> * 1000);
@@ -217,9 +223,10 @@ end
 
 
 function lovebird.onRequest(req, client)
+  local head = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
   -- Handle request for just the buffer
   if req.url:match("buffer") then
-    return "HTTP/1.1 200 OK\r\n\r\n" .. lovebird.buffer
+    return head .. lovebird.buffer
   end
   -- Handle input
   if req.body then
@@ -228,7 +235,7 @@ function lovebird.onRequest(req, client)
   end
   -- Generate page
   local t = {}
-  table.insert(t, "HTTP/1.1 200 OK\r\n\r\n") 
+  table.insert(t, head) 
   table.insert(t, lovebird.template(lovebird.page, { lovebird = lovebird }))
   return table.concat(t)
 end
