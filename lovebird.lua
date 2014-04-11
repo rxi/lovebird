@@ -139,7 +139,7 @@ lovebird.pages["index"] = [[
           }
         }
         /* Random used to avoid IE's caching */
-        req.open("GET", "/buffer?" + Math.random(), true);
+        req.open("GET", "/buffer?_=" + Math.random(), true);
         req.send();
       }
       setInterval(refresh, <?lua echo(lovebird.refreshrate) ?> * 1000);
@@ -208,6 +208,17 @@ function lovebird.template(str, env)
 end
 
 
+function lovebird.parseurl(url)
+  local res = {}
+  res.path, res.search = url:match("/([^%?]*)%??(.*)")
+  res.query = {}
+  for k, v in res.search:gmatch("([^&^?]-)=([^&^#]*)") do
+    res.query[k] = unescape(v)
+  end
+  return res
+end
+
+
 function lovebird.print(...)
   local str = table.concat(map({...}, tostring), " ")
   if not lovebird.allowhtml then
@@ -267,6 +278,8 @@ function lovebird.onConnect(client)
   if req.headers["Content-Length"] then
     req.body = client:receive(req.headers["Content-Length"])
   end
+  -- Parse request line's url
+  req.parsedurl = lovebird.parseurl(req.url)
   -- Handle request; get data to send
   local data, index = lovebird.onRequest(req), 0
   -- Send data
