@@ -162,6 +162,43 @@ end
 lovebird.pages["buffer"] = [[ <?lua echo(lovebird.buffer) ?> ]]
 
 
+lovebird.pages["tree"] = [[
+  <?lua 
+    local t = _G
+    local p = req.parsedurl.query.p or ""
+    if p ~= "" then
+      for x in p:gmatch("[^%.]+") do
+        t = t[x]
+      end
+    end
+  ?>
+
+  <table>
+    <?lua 
+      local keys = {}
+      for k in pairs(t) do table.insert(keys, k) end
+      table.sort(keys)
+      for _, k in pairs(keys) do 
+        local v = t[k]
+    ?>
+
+    <tr>
+      <td> 
+        <?lua if type(v) == "table" then ?>
+          <a href="<?lua echo("?p="..p.."."..k) ?>"> <?lua echo(k) ?> </a>
+        <?lua else ?>
+          <?lua echo(k) ?>
+        <?lua end ?>
+      </td>
+      <td>
+        <?lua echo(lovebird.htmlescape(lovebird.truncate(tostring(v), 30))) ?>
+      </td>
+    </tr>
+    <?lua end ?>
+  </table>
+]]
+
+
 
 local loadstring = loadstring or load
 
@@ -233,6 +270,14 @@ end
 
 function lovebird.htmlescape(str)
   return str:gsub("<", "&lt;")
+end
+
+
+function lovebird.truncate(str, len)
+  if #str < len then
+    return str
+  end
+  return str:sub(1, len - 3) .. "..."
 end
 
 
