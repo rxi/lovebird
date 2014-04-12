@@ -422,10 +422,14 @@ function lovebird.onRequest(req, client)
   if not lovebird.pages[page] then 
     return "HTTP/1.1 404\r\nContent-Type: text/html\r\n\r\nBad page"
   end
-  -- Handle existent page
-  return "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" ..
-         lovebird.template(lovebird.pages[page],
-                           { lovebird = lovebird, req = req })
+  -- Handle page
+  local str
+  xpcall(function()
+    str = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" ..
+          lovebird.template(lovebird.pages[page],
+                            { lovebird = lovebird, req = req })
+  end, lovebird.onError)
+  return str
 end
 
 
@@ -474,7 +478,7 @@ function lovebird.update()
     client:settimeout(2)
     local addr = client:getsockname()
     if lovebird.checkwhitelist(addr) then 
-      xpcall(function() lovebird.onConnect(client) end, lovebird.onError)
+      xpcall(function() lovebird.onConnect(client) end, function() end)
     else
       trace("got non-whitelisted connection attempt: ", addr)
       client:close()
