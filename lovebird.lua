@@ -9,7 +9,7 @@
 
 local socket = require "socket"
 
-local lovebird = { _version = "0.0.1" }
+local lovebird = { _version = "0.1.0" }
 
 lovebird.inited = false
 lovebird.host = "*"
