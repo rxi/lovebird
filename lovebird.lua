@@ -224,20 +224,28 @@ end
           var html = "<table>";
           for (var i = 0; json.vars[i]; i++) {
             var x = json.vars[i];
+            var fullpath = (json.path + "." + x.key).replace(/^\.*/, "");
             var k = x.key;
             if (x.type == "table") {
-              var p = "setEnvPath('" + json.path + "." + x.key + "');";
-              k = "<a href='#' onclick=\"" + p + "\">" + k + "</a>";
+              k = "<a href='#' onclick=\"setEnvPath('" + fullpath + "')\">" +
+                  k + "</a>";
             }
-            html += "<tr><td>" + k + "</td><td>" + x.value + "</td></tr>";
+            var v = "<a href='#' onclick=\"insertVar('" + fullpath + "');\">" +
+                    x.value + "</a>"
+            html += "<tr><td>" + k + "</td><td>" + v + "</td></tr>";
           }
           html += "</table>";
           updateDivContent("envvars", html);
         });
       }
       var setEnvPath = function(p) { 
-        envPath = p.replace(/^\.*/, "");
+        envPath = p;
         refreshEnv();
+      }
+      var insertVar = function(p) {
+        var b = document.getElementById("inputbox");
+        b.value += p;
+        b.focus();
       }
       setInterval(refreshEnv, <?lua echo(lovebird.refreshrate) ?> * 1000);
     </script>
