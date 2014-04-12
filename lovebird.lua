@@ -158,13 +158,9 @@ end
     <script>
       document.getElementById("inputbox").focus();
 
-      var updateDivContent = function(id, content) {
-        var div = document.getElementById(id); 
-        if (div.innerHTML != content) {
-          div.innerHTML = content;
-          return true;
-        }
-        return false;
+      var truncate = function(str, len) {
+        if (str.length <= len) return str;
+        return str.substring(0, len - 3) + "...";
       }
 
       var geturl = function(url, onComplete, onFail) {
@@ -180,6 +176,15 @@ end
         url += (url.indexOf("?") > -1 ? "&_=" : "?_=") + Math.random();
         req.open("GET", url, true);
         req.send();
+      }
+
+      var updateDivContent = function(id, content) {
+        var div = document.getElementById(id); 
+        if (div.innerHTML != content) {
+          div.innerHTML = content;
+          return true;
+        }
+        return false;
       }
 
       var onInputSubmit = function() {
@@ -219,7 +224,7 @@ end
           for (var i = 0; i < p.length; i++) {
             acc += "." + p[i];
             html += " <a href='#' onclick=\"setEnvPath('" + acc + "')\">" +
-                    p[i] + "</a>";
+                    truncate(p[i], 10) + "</a>";
           }
           updateDivContent("envheader", html);
 
@@ -234,7 +239,7 @@ end
           for (var i = 0; json.vars[i]; i++) {
             var x = json.vars[i];
             var fullpath = (json.path + "." + x.key).replace(/^\./, "");
-            var k = x.key;
+            var k = truncate(x.key, 15);
             if (x.type == "table") {
               k = "<a href='#' onclick=\"setEnvPath('" + fullpath + "')\">" +
                   k + "</a>";
@@ -377,7 +382,7 @@ end
 
 
 function lovebird.truncate(str, len)
-  if #str < len then
+  if #str <= len then
     return str
   end
   return str:sub(1, len - 3) .. "..."
