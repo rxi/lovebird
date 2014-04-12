@@ -119,11 +119,17 @@ end
       position: absolute;
       top: 40px; bottom: 0px; right: 0px;
       width: 300px;
-      overflow-y: scroll;
     }
     #envheader {
       padding: 5px;
       background: #E0E0E0;
+    }
+    #envvars {
+      position: absolute;
+      left: 0px; right: 0px; top: 25px; bottom: 0px;
+      margin: 10px;
+      overflow-y: scroll;
+      font-size: 12px;
     }
   </style>
   </head>
@@ -145,7 +151,8 @@ end
         </div>
       </div>
       <div id="env" class="greybordered">
-        
+        <div id="envheader"></div>
+        <div id="envvars"></div>
       </div>
     </div>
     <script>
@@ -182,7 +189,7 @@ end
       }
       scrolloutput()
 
-      /* Refresh output buffer and status */
+      /* Output buffer and status */
       var refreshOutput = function() {
         getPage("/buffer", function(text) {
           updateDivContent("status", "connected &#9679;");
@@ -196,14 +203,42 @@ end
       }
       setInterval(refreshOutput, <?lua echo(lovebird.refreshrate) ?> * 1000);
 
-      /* Refresh env view */
+      /* Environment variable view */
       var envPath = "";
       var refreshEnv = function() {
-        getPage("/tree?p=" + envPath, function(text) { 
-          updateDivContent("env", text);
+        getPage("/env.json?p=" + envPath, function(text) { 
+          var json = eval("(" + text + ")");
+
+          /* Header */
+          var html = "<a href='#' onclick=\"setEnvPath('')\">env</a>";
+          var acc = "";
+          var p = json.path != "" ? json.path.split(".") : [];
+          for (var i = 0; i < p.length; i++) {
+            acc += "." + p[i];
+            html += " <a href='#' onclick=\"setEnvPath('" + acc + "')\">" +
+                    p[i] + "</a>";
+          }
+          updateDivContent("envheader", html);
+
+          /* Variables */
+          var html = "<table>";
+          for (var i = 0; json.vars[i]; i++) {
+            var x = json.vars[i];
+            var k = x.key;
+            if (x.type == "table") {
+              var p = "setEnvPath('" + json.path + "." + x.key + "');";
+              k = "<a href='#' onclick=\"" + p + "\">" + k + "</a>";
+            }
+            html += "<tr><td>" + k + "</td><td>" + x.value + "</td></tr>";
+          }
+          html += "</table>";
+          updateDivContent("envvars", html);
         });
       }
-      var onTreeLink = function(p) { envPath = p; refreshEnv(); }
+      var setEnvPath = function(p) { 
+        envPath = p.replace(/^\.*/, "");
+        refreshEnv();
+      }
       setInterval(refreshEnv, <?lua echo(lovebird.refreshrate) ?> * 1000);
     </script>
   </body>
@@ -214,7 +249,7 @@ end
 lovebird.pages["buffer"] = [[ <?lua echo(lovebird.buffer) ?> ]]
 
 
-lovebird.pages["tree"] = [[
+lovebird.pages["env.json"] = [[
   <?lua 
     local t = _G
     local p = req.parsedurl.query.p or ""
@@ -224,42 +259,28 @@ lovebird.pages["tree"] = [[
       end
     end
   ?>
-
-  <div id="envheader">
-    <a href="#" onclick="onTreeLink('')">root</a>
-    <?lua local acc = "" ?>
-    <?lua for x in p:gmatch("[^%.]+") do ?>
-    <?lua acc = acc .. "." .. x ?>
-      <a href="#" onclick="onTreeLink('<?lua echo(acc)?>')">
-        <?lua echo(x) ?>
-      </a>
-    <?lua end ?>
-  </div>
-
-  <table>
-    <?lua 
-      local keys = {}
-      for k in pairs(t) do table.insert(keys, k) end
-      table.sort(keys)
-      for _, k in pairs(keys) do 
-        local v = t[k]
-    ?>
-    <tr>
-      <td> 
-        <?lua if type(v) == "table" then ?>
-          <a href="#" onclick="onTreeLink('<?lua echo(p.."."..k)?>')">
-            <?lua echo(k) ?>
-          </a>
-        <?lua else ?>
-          <?lua echo(k) ?>
-        <?lua end ?>
-      </td>
-      <td>
-        <?lua echo(lovebird.htmlescape(lovebird.truncate(tostring(v), 30))) ?>
-      </td>
-    </tr>
-    <?lua end ?>
-  </table>
+  {
+    "path": "<?lua echo(p) ?>",
+    "vars": [
+      <?lua 
+        local keys = {}
+        for k in pairs(t) do table.insert(keys, k) end
+        table.sort(keys)
+        for _, k in pairs(keys) do 
+          local v = t[k]
+      ?>
+        { 
+          "key": "<?lua echo(k) ?>",
+          "value": <?lua echo( 
+                            string.format("%q",
+                              lovebird.truncate(
+                                lovebird.htmlescape(
+                                  tostring(v)), 26))) ?>,
+          "type": "<?lua echo(type(v)) ?>",
+        },
+      <?lua end ?>
+    ]
+  }
 ]]
 
 
