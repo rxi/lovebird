@@ -139,7 +139,7 @@ end
         <a href="https://github.com/rxi/lovebird">lovebird</a>
         <span id="version"><?lua echo(lovebird._version) ?></span>
       </div>
-      <div id="status">connected &#9679;</div>
+      <div id="status"></div>
     </div>
     <div id="main">
       <div id="console" class="greybordered">
@@ -267,44 +267,44 @@ lovebird.pages["buffer"] = [[ <?lua echo(lovebird.buffer) ?> ]]
 
 
 lovebird.pages["env.json"] = [[
-  <?lua 
-    local t = _G
-    local p = req.parsedurl.query.p or ""
-    p = p:gsub("%.+", "%."):match("^[%.]*(.*)[%.]*$")
-    if p ~= "" then
-      for x in p:gmatch("[^%.]+") do
-        t = t[x]
-        -- Return early if path does not exist
-        if type(t) ~= "table" then
-          echo('{ "valid": false, "path": ' .. string.format("%q", p) .. ' }')
-          return
-        end
+<?lua 
+  local t = _G
+  local p = req.parsedurl.query.p or ""
+  p = p:gsub("%.+", "%."):match("^[%.]*(.*)[%.]*$")
+  if p ~= "" then
+    for x in p:gmatch("[^%.]+") do
+      t = t[x]
+      -- Return early if path does not exist
+      if type(t) ~= "table" then
+        echo('{ "valid": false, "path": ' .. string.format("%q", p) .. ' }')
+        return
       end
     end
-  ?>
-  {
-    "valid": true,
-    "path": "<?lua echo(p) ?>",
-    "vars": [
-      <?lua 
-        local keys = {}
-        for k in pairs(t) do table.insert(keys, k) end
-        table.sort(keys)
-        for _, k in pairs(keys) do 
-          local v = t[k]
-      ?>
-        { 
-          "key": "<?lua echo(k) ?>",
-          "value": <?lua echo( 
-                            string.format("%q",
-                              lovebird.truncate(
-                                lovebird.htmlescape(
-                                  tostring(v)), 26))) ?>,
-          "type": "<?lua echo(type(v)) ?>",
-        },
-      <?lua end ?>
-    ]
-  }
+  end
+?>
+{
+  "valid": true,
+  "path": "<?lua echo(p) ?>",
+  "vars": [
+    <?lua 
+      local keys = {}
+      for k in pairs(t) do table.insert(keys, k) end
+      table.sort(keys)
+      for _, k in pairs(keys) do 
+        local v = t[k]
+    ?>
+      { 
+        "key": "<?lua echo(k) ?>",
+        "value": <?lua echo( 
+                          string.format("%q",
+                            lovebird.truncate(
+                              lovebird.htmlescape(
+                                tostring(v)), 26))) ?>,
+        "type": "<?lua echo(type(v)) ?>",
+      },
+    <?lua end ?>
+  ]
+}
 ]]
 
 
