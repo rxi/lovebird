@@ -49,12 +49,6 @@ end
     form {
       margin-bottom: 0px;
     }
-    a {
-      color: #000000;
-    }
-    a:hover {
-      text-decoration: none;
-    }
     .timestamp {
       color: #909090;
     }
@@ -62,6 +56,7 @@ end
       margin: 12px;
       background: #F0F0F0;
       border: 1px solid #E0E0E0;
+      border-radius: 3px;
     }
     #header {
       background: #101010;
@@ -87,6 +82,20 @@ end
       float: right;
       font-size: 14px;
       padding-top: 4px;
+    }
+    #main a {
+      color: #000000;
+      text-decoration: none;
+      background: #E0E0E0;
+      border: 1px solid #D0D0D0;
+      border-radius: 3px;
+      padding-left: 2px;
+      padding-right: 2px;
+      display: inline-block;
+    }
+    #main a:hover {
+      background: #D0D0D0;
+      border: 1px solid #C0C0C0;
     }
     #console {
       position: absolute;
@@ -126,16 +135,18 @@ end
       </div>
       <div id="status">connected &#9679;</div>
     </div>
-    <div id="console" class="greybordered">
-      <div id="output"> <?lua echo(lovebird.buffer) ?> </div>
-      <div id="input">
-        <form method="post">
-          <input id="inputbox" name="input" type="text"></input>
-        </form>
+    <div id="main">
+      <div id="console" class="greybordered">
+        <div id="output"> <?lua echo(lovebird.buffer) ?> </div>
+        <div id="input">
+          <form method="post">
+            <input id="inputbox" name="input" type="text"></input>
+          </form>
+        </div>
       </div>
-    </div>
-    <div id="env" class="greybordered">
-      
+      <div id="env" class="greybordered">
+        
+      </div>
     </div>
     <script>
       document.getElementById("inputbox").focus();
@@ -219,7 +230,6 @@ lovebird.pages["tree"] = [[
     <?lua local acc = "" ?>
     <?lua for x in p:gmatch("[^%.]+") do ?>
     <?lua acc = acc .. "." .. x ?>
-      .
       <a href="#" onclick="onTreeLink('<?lua echo(acc)?>')">
         <?lua echo(x) ?>
       </a>
