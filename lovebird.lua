@@ -238,14 +238,15 @@ end
           var html = "<table>";
           for (var i = 0; json.vars[i]; i++) {
             var x = json.vars[i];
-            var fullpath = (json.path + "." + x.key).replace(/^\./, "");
+            var fullpath = (json.path + "." + x.key) .replace(/^\./, "");
             var k = truncate(x.key, 15);
             if (x.type == "table") {
               k = "<a href='#' onclick=\"setEnvPath('" + fullpath + "')\">" +
                   k + "</a>";
             }
-            var v = "<a href='#' onclick=\"insertVar('" + fullpath + "');\">" +
-                    x.value + "</a>"
+            var v = "<a href='#' onclick=\"insertVar('" +
+                    fullpath.replace(/\.(-?[0-9])+/g, "[$1]") +
+                    "');\">" + x.value + "</a>"
             html += "<tr><td>" + k + "</td><td>" + v + "</td></tr>";
           }
           html += "</table>";
@@ -278,7 +279,7 @@ lovebird.pages["env.json"] = [[
   p = p:gsub("%.+", "%."):match("^[%.]*(.*)[%.]*$")
   if p ~= "" then
     for x in p:gmatch("[^%.]+") do
-      t = t[x]
+      t = t[x] or t[tonumber(x)]
       -- Return early if path does not exist
       if type(t) ~= "table" then
         echo('{ "valid": false, "path": ' .. string.format("%q", p) .. ' }')
