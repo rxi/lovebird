@@ -304,12 +304,6 @@ local map = function(t, fn)
   return res
 end
 
-local find = function(t, value)
-  for k, v in pairs(t) do
-    if v == value then return k end
-  end
-end
-
 local trace = function(...)
   print("[lovebird] " .. table.concat(map({...}, tostring), " "))
 end
