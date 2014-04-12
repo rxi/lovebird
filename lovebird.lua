@@ -30,7 +30,7 @@ lovebird.pages["index"] = [[
 -- Handle console input
 if req.parsedbody.input then
   local str = req.parsedbody.input
-  xpcall(function() assert(loadstring(str))() end, lovebird.onError)
+  xpcall(function() assert(loadstring(str))() end, lovebird.onerror)
 end
 ?>
 
@@ -410,12 +410,12 @@ function lovebird.print(...)
 end
 
 
-function lovebird.onError(err)
+function lovebird.onerror(err)
   trace("ERROR:", err)
 end
 
 
-function lovebird.onRequest(req, client)
+function lovebird.onrequest(req, client)
   local page = req.parsedurl.path
   page = page ~= "" and page or "index"
   -- Handle "page not found"
@@ -428,12 +428,12 @@ function lovebird.onRequest(req, client)
     str = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" ..
           lovebird.template(lovebird.pages[page],
                             { lovebird = lovebird, req = req })
-  end, lovebird.onError)
+  end, lovebird.onerror)
   return str
 end
 
 
-function lovebird.onConnect(client)
+function lovebird.onconnect(client)
   -- Create request table
   local requestptn = "(%S*)%s*(%S*)%s*(%S*)"
   local req = {}
@@ -461,7 +461,7 @@ function lovebird.onConnect(client)
   -- Parse request line's url
   req.parsedurl = lovebird.parseurl(req.url)
   -- Handle request; get data to send
-  local data, index = lovebird.onRequest(req), 0
+  local data, index = lovebird.onrequest(req), 0
   -- Send data
   while index < #data do
     index = index + client:send(data, index)
@@ -478,7 +478,7 @@ function lovebird.update()
     client:settimeout(2)
     local addr = client:getsockname()
     if lovebird.checkwhitelist(addr) then 
-      xpcall(function() lovebird.onConnect(client) end, function() end)
+      xpcall(function() lovebird.onconnect(client) end, function() end)
     else
       trace("got non-whitelisted connection attempt: ", addr)
       client:close()
