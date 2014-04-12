@@ -233,7 +233,7 @@ end
           var html = "<table>";
           for (var i = 0; json.vars[i]; i++) {
             var x = json.vars[i];
-            var fullpath = json.path + "." + x.key;
+            var fullpath = (json.path + "." + x.key).replace(/^\./, "");
             var k = x.key;
             if (x.type == "table") {
               k = "<a href='#' onclick=\"setEnvPath('" + fullpath + "')\">" +
