@@ -223,6 +223,12 @@ end
           }
           updateDivContent("envheader", html);
 
+          /* Handle invalid table path */
+          if (!json.valid) {
+            updateDivContent("envvars", "Bad path");
+            return;
+          }
+
           /* Variables */
           var html = "<table>";
           for (var i = 0; json.vars[i]; i++) {
@@ -268,10 +274,16 @@ lovebird.pages["env.json"] = [[
     if p ~= "" then
       for x in p:gmatch("[^%.]+") do
         t = t[x]
+        -- Return early if path does not exist
+        if type(t) ~= "table" then
+          echo('{ "valid": false, "path": ' .. string.format("%q", p) .. ' }')
+          return
+        end
       end
     end
   ?>
   {
+    "valid": true,
     "path": "<?lua echo(p) ?>",
     "vars": [
       <?lua 
