@@ -227,7 +227,7 @@ end
           var html = "<table>";
           for (var i = 0; json.vars[i]; i++) {
             var x = json.vars[i];
-            var fullpath = (json.path + "." + x.key).replace(/^\.*/, "");
+            var fullpath = json.path + "." + x.key;
             var k = x.key;
             if (x.type == "table") {
               k = "<a href='#' onclick=\"setEnvPath('" + fullpath + "')\">" +
@@ -264,6 +264,7 @@ lovebird.pages["env.json"] = [[
   <?lua 
     local t = _G
     local p = req.parsedurl.query.p or ""
+    p = p:gsub("%.+", "%."):match("^[%.]*(.*)[%.]*$")
     if p ~= "" then
       for x in p:gmatch("[^%.]+") do
         t = t[x]
