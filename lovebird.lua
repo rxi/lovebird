@@ -323,7 +323,9 @@ local map = function(t, fn)
 end
 
 local trace = function(...)
-  print("[lovebird] " .. table.concat(map({...}, tostring), " "))
+  local str = "[lovebird] " .. table.concat(map({...}, tostring), " ")
+  print(str)
+  if not lovebird.wrapprint then lovebird.print(str) end
 end
 
 local unescape = function(str)
