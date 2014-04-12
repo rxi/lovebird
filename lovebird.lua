@@ -48,8 +48,19 @@ end
     form {
       margin-bottom: 0px;
     }
+    a {
+      color: #000000;
+    }
+    a:hover {
+      text-decoration: none;
+    }
     .timestamp {
       color: #909090;
+    }
+    .greybordered {
+      margin: 12px;
+      background: #F0F0F0;
+      border: 1px solid #E0E0E0;
     }
     #header {
       background: #101010;
@@ -76,12 +87,9 @@ end
       font-size: 14px;
       padding-top: 4px;
     }
-    #content {
+    #console {
       position: absolute;
-      margin: 12px;
-      top: 40px; bottom: 0px; left: 0px; right: 0px;
-      background: #F0F0F0;
-      border: 1px solid #E0E0E0;
+      top: 40px; bottom: 0px; left: 0px; right: 252px;
     }
     #input {
       position: absolute;
@@ -97,6 +105,17 @@ end
       margin: 10px;
       top: 0px; bottom: 36px; left: 0px; right: 0px;
     }
+    #env {
+      position: absolute;
+      top: 40px; bottom: 0px; right: 0px;
+      width: 240px;
+      font-size: 12px;
+      overflow-y: scroll;
+    }
+    #envheader {
+      padding: 5px;
+      background: #E0E0E0;
+    }
   </style>
   </head>
   <body>
@@ -107,13 +126,16 @@ end
       </div>
       <div id="status">connected &#9679;</div>
     </div>
-    <div id="content">
+    <div id="console" class="greybordered">
       <div id="output"> <?lua echo(lovebird.buffer) ?> </div>
       <div id="input">
         <form method="post">
           <input id="inputbox" name="input" type="text"></input>
         </form>
       </div>
+    </div>
+    <div id="env" class="greybordered">
+      
     </div>
     <script>
       document.getElementById("inputbox").focus();
@@ -132,12 +154,13 @@ end
         req.onreadystatechange = function() {
           if (req.readyState != 4) return;
           if (req.status == 200) {
-            onComplete(req.responseText)
+            if (onComplete) onComplete(req.responseText);
           } else {
-            onFail(req.responseText)
+            if (onFail) onFail(req.responseText);
           }
         }
-        req.open("GET", url + "?_=" + Math.random(), true);
+        url += (url.indexOf("?") > -1 ? "&_=" : "?_=") + Math.random();
+        req.open("GET", url, true);
         req.send();
       }
 
@@ -149,20 +172,28 @@ end
       scrolloutput()
 
       /* Refresh output buffer and status */
-      var refresh = function() {
-        getPage("/buffer",
-          function(text) {
-            updateDivContent("status", "connected &#9679;");
-            if (updateDivContent("output", text)) {
-              scrolloutput();
-            }
-          },
-          function(text) {
-            updateDivContent("status", "disconnected &#9675;");
+      var refreshOutput = function() {
+        getPage("/buffer", function(text) {
+          updateDivContent("status", "connected &#9679;");
+          if (updateDivContent("output", text)) {
+            scrolloutput();
           }
-        );
+        },
+        function(text) {
+          updateDivContent("status", "disconnected &#9675;");
+        });
       }
-      setInterval(refresh, <?lua echo(lovebird.refreshrate) ?> * 1000);
+      setInterval(refreshOutput, <?lua echo(lovebird.refreshrate) ?> * 1000);
+
+      /* Refresh env view */
+      var envPath = "";
+      var refreshEnv = function() {
+        getPage("/tree?p=" + envPath, function(text) { 
+          updateDivContent("env", text);
+        });
+      }
+      var onTreeLink = function(p) { envPath = p; refreshEnv(); }
+      setInterval(refreshEnv, <?lua echo(lovebird.refreshrate) ?> * 1000);
     </script>
   </body>
 </html>
@@ -183,6 +214,18 @@ lovebird.pages["tree"] = [[
     end
   ?>
 
+  <div id="envheader">
+    <a href="#" onclick="onTreeLink('')">root</a>
+    <?lua local acc = "" ?>
+    <?lua for x in p:gmatch("[^%.]+") do ?>
+    <?lua acc = acc .. "." .. x ?>
+      .
+      <a href="#" onclick="onTreeLink('<?lua echo(acc)?>')">
+        <?lua echo(x) ?>
+      </a>
+    <?lua end ?>
+  </div>
+
   <table>
     <?lua 
       local keys = {}
@@ -191,11 +234,12 @@ lovebird.pages["tree"] = [[
       for _, k in pairs(keys) do 
         local v = t[k]
     ?>
-
     <tr>
       <td> 
         <?lua if type(v) == "table" then ?>
-          <a href="<?lua echo("?p="..p.."."..k) ?>"> <?lua echo(k) ?> </a>
+          <a href="#" onclick="onTreeLink('<?lua echo(p.."."..k)?>')">
+            <?lua echo(k) ?>
+          </a>
         <?lua else ?>
           <?lua echo(k) ?>
         <?lua end ?>
