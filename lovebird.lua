@@ -21,7 +21,7 @@ lovebird.wrapprint = true
 lovebird.timestamp = true
 lovebird.allowhtml = true
 lovebird.port = 8000
-lovebird.whitelist = { "127.0.0.1", "localhost" }
+lovebird.whitelist = { "127.0.0.1", "192.168.*.*" }
 lovebird.maxlines = 200
 lovebird.refreshrate = .5
 
@@ -377,6 +377,16 @@ function lovebird.truncate(str, len)
 end
 
 
+function lovebird.checkwhitelist(addr)
+  if lovebird.whitelist == nil then return true end
+  for _, a in pairs(lovebird.whitelist) do
+    local ptn = "^" .. a:gsub("%.", "%%."):gsub("%*", "%%d*") .. "$"
+    if addr:match(ptn) then return true end
+  end
+  return false
+end
+
+
 function lovebird.print(...)
   local str = table.concat(map({...}, tostring), " ")
   if not lovebird.allowhtml then
@@ -456,7 +466,7 @@ function lovebird.update()
   if client then
     client:settimeout(2)
     local addr = client:getsockname()
-    if not lovebird.whitelist or find(lovebird.whitelist, addr) then 
+    if lovebird.checkwhitelist(addr) then 
       xpcall(function() lovebird.onConnect(client) end, lovebird.onError)
     else
       trace("got non-whitelisted connection attempt: ", addr)
