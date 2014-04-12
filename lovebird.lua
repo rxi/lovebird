@@ -51,6 +51,7 @@ end
     }
     .timestamp {
       color: #909090;
+      padding-right: 4px;
     }
     .greybordered {
       margin: 12px;
@@ -238,7 +239,7 @@ end
           var html = "<table>";
           for (var i = 0; json.vars[i]; i++) {
             var x = json.vars[i];
-            var fullpath = (json.path + "." + x.key) .replace(/^\./, "");
+            var fullpath = (json.path + "." + x.key).replace(/^\./, "");
             var k = truncate(x.key, 15);
             if (x.type == "table") {
               k = "<a href='#' onclick=\"setEnvPath('" + fullpath + "')\">" +
@@ -414,7 +415,7 @@ function lovebird.print(...)
     str = lovebird.htmlescape(str)
   end
   if lovebird.timestamp then
-    str = os.date('<span class="timestamp">[%H:%M:%S]</span> ') .. str
+    str = os.date('<span class="timestamp">%H:%M:%S</span> ') .. str
   end
   table.insert(lovebird.lines, str)
   if #lovebird.lines > lovebird.maxlines then
