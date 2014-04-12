@@ -145,7 +145,7 @@ end
       <div id="console" class="greybordered">
         <div id="output"> <?lua echo(lovebird.buffer) ?> </div>
         <div id="input">
-          <form method="post">
+          <form method="post" onsubmit="onInputSubmit(); return false">
             <input id="inputbox" name="input" type="text"></input>
           </form>
         </div>
@@ -167,7 +167,7 @@ end
         return false;
       }
 
-      var getPage = function(url, onComplete, onFail) {
+      var geturl = function(url, onComplete, onFail) {
         var req = new XMLHttpRequest();
         req.onreadystatechange = function() {
           if (req.readyState != 4) return;
@@ -182,19 +182,22 @@ end
         req.send();
       }
 
-      /* Scroll output to bottom */
-      var scrolloutput = function() {
-        var div = document.getElementById("output"); 
-        div.scrollTop = div.scrollHeight;
+      var onInputSubmit = function() {
+        var b = document.getElementById("inputbox");
+        var req = new XMLHttpRequest();
+        req.open("POST", "/", true);
+        req.send("input=" + encodeURIComponent(b.value));
+        b.value = "";
+        refreshOutput();
       }
-      scrolloutput()
 
       /* Output buffer and status */
       var refreshOutput = function() {
-        getPage("/buffer", function(text) {
+        geturl("/buffer", function(text) {
           updateDivContent("status", "connected &#9679;");
           if (updateDivContent("output", text)) {
-            scrolloutput();
+            var div = document.getElementById("output"); 
+            div.scrollTop = div.scrollHeight;
           }
         },
         function(text) {
@@ -206,7 +209,7 @@ end
       /* Environment variable view */
       var envPath = "";
       var refreshEnv = function() {
-        getPage("/env.json?p=" + envPath, function(text) { 
+        geturl("/env.json?p=" + envPath, function(text) { 
           var json = eval("(" + text + ")");
 
           /* Header */
