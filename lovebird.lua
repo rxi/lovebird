@@ -23,7 +23,7 @@ lovebird.allowhtml = true
 lovebird.port = 8000
 lovebird.whitelist = { "127.0.0.1", "192.168.*.*" }
 lovebird.maxlines = 200
-lovebird.refreshrate = .5
+lovebird.updateinterval = .5
 
 lovebird.pages["index"] = [[
 <?lua
@@ -204,7 +204,7 @@ end
           updateDivContent("status", "disconnected &#9675;");
         });
       }
-      setInterval(refreshOutput, <?lua echo(lovebird.refreshrate) ?> * 1000);
+      setInterval(refreshOutput, <?lua echo(lovebird.updateinterval) ?> * 1000);
 
       /* Environment variable view */
       var envPath = "";
@@ -256,7 +256,7 @@ end
         b.value += p;
         b.focus();
       }
-      setInterval(refreshEnv, <?lua echo(lovebird.refreshrate) ?> * 1000);
+      setInterval(refreshEnv, <?lua echo(lovebird.updateinterval) ?> * 1000);
     </script>
   </body>
 </html>
