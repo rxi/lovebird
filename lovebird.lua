@@ -42,6 +42,7 @@ end
   <style>
     body { 
       margin: 0px;
+      font-size: 14px;
       font-family: helvetica, verdana, sans;
       background: #FFFFFF;
     }
@@ -89,7 +90,7 @@ end
     }
     #console {
       position: absolute;
-      top: 40px; bottom: 0px; left: 0px; right: 252px;
+      top: 40px; bottom: 0px; left: 0px; right: 312px;
     }
     #input {
       position: absolute;
@@ -108,8 +109,7 @@ end
     #env {
       position: absolute;
       top: 40px; bottom: 0px; right: 0px;
-      width: 240px;
-      font-size: 12px;
+      width: 300px;
       overflow-y: scroll;
     }
     #envheader {
