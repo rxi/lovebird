@@ -394,6 +394,12 @@ function lovebird.checkwhitelist(addr)
 end
 
 
+function lovebird.clear()
+  lovebird.lines = {}
+  lovebird.buffer = ""
+end
+
+
 function lovebird.print(...)
   local str = table.concat(map({...}, tostring), " ")
   if not lovebird.allowhtml then
