@@ -160,8 +160,8 @@ end
         <div id="output"> <?lua echo(lovebird.buffer) ?> </div>
         <div id="input">
           <form method="post" 
-                onkeydown="onInputKeyDown(event);"
-                onsubmit="onInputSubmit(); return false">
+                onkeydown="return onInputKeyDown(event);"
+                onsubmit="onInputSubmit(); return false;">
             <input id="inputbox" name="input" type="text"></input>
           </form>
         </div>
@@ -223,17 +223,19 @@ end
       inputHistory.index = 0;
       var onInputKeyDown = function(e) {
         var key = e.which || e.keyCode;
+        if (key != 38 && key != 40) return true;
         var b = document.getElementById("inputbox");
         if (key == 38 && inputHistory.index < inputHistory.length - 1) {
           /* Up key */
           inputHistory.index++;
-          b.value = inputHistory[inputHistory.index];
         }
         if (key == 40 && inputHistory.index >= 0) {
           /* Down key */
           inputHistory.index--;
-          b.value = inputHistory[inputHistory.index] || "";
         }
+        b.value = inputHistory[inputHistory.index] || "";
+        b.selectionStart = b.value.length;
+        return false;
       }
 
       /* Output buffer and status */
