@@ -194,10 +194,11 @@ end
         req.send();
       }
 
+      var divContentCache = {}
       var updateDivContent = function(id, content) {
-        var div = document.getElementById(id); 
-        if (div.innerHTML != content) {
-          div.innerHTML = content;
+        if (divContentCache[id] != content) {
+          document.getElementById(id).innerHTML = content;
+          divContentCache[id] = content
           return true;
         }
         return false;
