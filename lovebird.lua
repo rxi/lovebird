@@ -159,7 +159,9 @@ end
       <div id="console" class="greybordered">
         <div id="output"> <?lua echo(lovebird.buffer) ?> </div>
         <div id="input">
-          <form method="post" onsubmit="onInputSubmit(); return false">
+          <form method="post" 
+                onkeydown="onInputKeyDown(event);"
+                onsubmit="onInputSubmit(); return false">
             <input id="inputbox" name="input" type="text"></input>
           </form>
         </div>
@@ -206,8 +208,32 @@ end
         var req = new XMLHttpRequest();
         req.open("POST", "/", true);
         req.send("input=" + encodeURIComponent(b.value));
+        /* Do input history */
+        if (b.value && inputHistory[0] != b.value) {
+          inputHistory.unshift(b.value);
+        }
+        inputHistory.index = -1;
+        /* Reset */
         b.value = "";
         refreshOutput();
+      }
+
+      /* Input box history */
+      var inputHistory = [];
+      inputHistory.index = 0;
+      var onInputKeyDown = function(e) {
+        var key = e.which || e.keyCode;
+        var b = document.getElementById("inputbox");
+        if (key == 38 && inputHistory.index < inputHistory.length - 1) {
+          /* Up key */
+          inputHistory.index++;
+          b.value = inputHistory[inputHistory.index];
+        }
+        if (key == 40 && inputHistory.index >= 0) {
+          /* Down key */
+          inputHistory.index--;
+          b.value = inputHistory[inputHistory.index] || "";
+        }
       }
 
       /* Output buffer and status */
