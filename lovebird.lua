@@ -53,6 +53,19 @@ end
       color: #909090;
       padding-right: 4px;
     }
+    .repeatcount {
+      color: #F0F0F0;
+      background: #505050;
+      font-size: 11px;
+      font-weight: bold;
+      text-align: center;
+      padding-left: 4px;
+      padding-right: 4px;
+      padding-top: 1px;
+      padding-bottom: 1px;
+      border-radius: 6px;
+      display: inline-block;
+    }
     .greybordered {
       margin: 12px;
       background: #F0F0F0;
@@ -411,17 +424,35 @@ end
 
 function lovebird.print(...)
   local str = table.concat(map({...}, tostring), " ")
-  if not lovebird.allowhtml then
-    str = lovebird.htmlescape(str)
+  local last = lovebird.lines[#lovebird.lines]
+  if last and str == last.str then
+    -- Update last line if this line is a duplicate of it
+    last.time = os.time()
+    last.count = last.count + 1
+  else
+    -- Create new line
+    local line = { str = str, time = os.time(), count = 1 }
+    table.insert(lovebird.lines, line)
+    if #lovebird.lines > lovebird.maxlines then
+      table.remove(lovebird.lines, 1)
+    end
   end
-  if lovebird.timestamp then
-    str = os.date('<span class="timestamp">%H:%M:%S</span> ') .. str
+  -- Build string buffer from lines
+  local function doline(line)
+    local str = line.str
+    if not lovebird.allowhtml then
+      str = lovebird.htmlescape(line.str)
+    end
+    if line.count > 1 then
+      str = '<span class="repeatcount">' .. line.count .. '</span> ' .. str
+    end
+    if lovebird.timestamp then
+      str = os.date('<span class="timestamp">%H:%M:%S</span> ', line.time) .. 
+            str
+    end
+    return str
   end
-  table.insert(lovebird.lines, str)
-  if #lovebird.lines > lovebird.maxlines then
-    table.remove(lovebird.lines, 1)
-  end
-  lovebird.buffer = table.concat(lovebird.lines, "<br>")
+  lovebird.buffer = table.concat(map(lovebird.lines, doline), "<br>")
 end
 
 
