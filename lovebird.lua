@@ -393,20 +393,18 @@ function lovebird.init()
 end
 
 
-function lovebird.template(str, env)
-  env = env or {}
-  local keys, vals = {}, {}
-  for k, v in pairs(env) do 
-    table.insert(keys, k)
-    table.insert(vals, v)
-  end
+function lovebird.template(str, params)
+  params = params and ("," .. params) or ""
   local f = function(x) return string.format(" echo(%q)", x) end
   str = ("?>"..str.."<?lua"):gsub("%?>(.-)<%?lua", f)
-  str = "local echo, " .. table.concat(keys, ",") .. " = ..." .. str
-  local output = {}
-  local echo = function(str) table.insert(output, str) end
-  assert(loadstring(str))(echo, unpack(vals))
-  return table.concat(map(output, tostring))
+  str = "local echo " .. params .. " = ..." .. str
+  local fn = assert(loadstring(str))
+  return function(...)
+    local output = {}
+    local echo = function(str) table.insert(output, str) end
+    fn(echo, ...)
+    return table.concat(map(output, tostring))
+  end
 end
 
 
@@ -501,7 +499,7 @@ function lovebird.onrequest(req, client)
   xpcall(function()
     str = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" ..
           lovebird.template(lovebird.pages[page],
-                            { lovebird = lovebird, req = req })
+                            "lovebird, req")(lovebird, req)
   end, lovebird.onerror)
   return str
 end
