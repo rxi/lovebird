@@ -342,7 +342,7 @@ lovebird.pages["env.json"] = [[
           table.insert(keys, k)
         end
       end
-      table.sort(keys)
+      table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
       for _, k in pairs(keys) do 
         local v = t[k]
     ?>
