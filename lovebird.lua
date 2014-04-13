@@ -550,8 +550,9 @@ end
 
 function lovebird.update()
   if not lovebird.inited then lovebird.init() end 
-  local client = lovebird.server:accept()
-  if client then
+  while 1 do
+    local client = lovebird.server:accept()
+    if not client then break end
     client:settimeout(2)
     local addr = client:getsockname()
     if lovebird.checkwhitelist(addr) then 
