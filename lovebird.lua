@@ -337,7 +337,11 @@ lovebird.pages["env.json"] = [[
   "vars": [
     <?lua 
       local keys = {}
-      for k in pairs(t) do table.insert(keys, k) end
+      for k in pairs(t) do 
+        if type(k) == "number" or type(k) == "string" then
+          table.insert(keys, k)
+        end
+      end
       table.sort(keys)
       for _, k in pairs(keys) do 
         local v = t[k]
