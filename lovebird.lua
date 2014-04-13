@@ -379,15 +379,21 @@ end
 
 
 function lovebird.init()
+  -- Init server
   lovebird.server = assert(socket.bind(lovebird.host, lovebird.port))
   lovebird.addr, lovebird.port = lovebird.server:getsockname()
   lovebird.server:settimeout(0)
+  -- Wrap print
   if lovebird.wrapprint then
     local oldprint = print
     print = function(...)
       oldprint(...)
       lovebird.print(...)
     end
+  end
+  -- Compile page templates
+  for k, page in pairs(lovebird.pages) do
+    lovebird.pages[k] = lovebird.template(page, "lovebird, req")
   end
   lovebird.inited = true
 end
@@ -498,8 +504,7 @@ function lovebird.onrequest(req, client)
   local str
   xpcall(function()
     str = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" ..
-          lovebird.template(lovebird.pages[page],
-                            "lovebird, req")(lovebird, req)
+          lovebird.pages[page](lovebird, req)
   end, lovebird.onerror)
   return str
 end
