@@ -19,7 +19,7 @@ lovebird.pages = {}
 
 lovebird.wrapprint = true
 lovebird.timestamp = true
-lovebird.allowhtml = true
+lovebird.allowhtml = false
 lovebird.port = 8000
 lovebird.whitelist = { "127.0.0.1", "192.168.*.*" }
 lovebird.maxlines = 200

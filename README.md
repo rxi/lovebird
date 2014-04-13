@@ -50,7 +50,7 @@ by default.
 ### lovebird.allowhtml
 Whether prints should allow HTML. If this is true then any HTML which is
 printed will be rendered as HTML; if it false then all HTML is rendered as
-text. This is `true` by default.
+text. This is `false` by default.
 
 ### lovebird.print(...)
 Prints its arguments to lovebird's console. If `lovebird.wrapprint` is set to
