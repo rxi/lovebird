@@ -478,7 +478,7 @@ function lovebird.print(...)
   local function doline(line)
     local str = line.str
     if not lovebird.allowhtml then
-      str = lovebird.htmlescape(line.str)
+      str = lovebird.htmlescape(line.str):gsub("\n", "<br>")
     end
     if line.count > 1 then
       str = '<span class="repeatcount">' .. line.count .. '</span> ' .. str
