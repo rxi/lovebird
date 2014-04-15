@@ -361,26 +361,7 @@ lovebird.pages["env.json"] = [[
 ]]
 
 
-
 local loadstring = loadstring or load
-
-local map = function(t, fn)
-  local res = {}
-  for k, v in pairs(t) do res[k] = fn(v) end
-  return res
-end
-
-local trace = function(...)
-  local str = "[lovebird] " .. table.concat(map({...}, tostring), " ")
-  print(str)
-  if not lovebird.wrapprint then lovebird.print(str) end
-end
-
-local unescape = function(str)
-  local f = function(x) return string.char(tonumber("0x"..x)) end
-  return (str:gsub("%+", " "):gsub("%%(..)", f))
-end
-
 
 
 function lovebird.init()
@@ -414,8 +395,28 @@ function lovebird.template(str, params)
     local output = {}
     local echo = function(str) table.insert(output, str) end
     fn(echo, ...)
-    return table.concat(map(output, tostring))
+    return table.concat(lovebird.map(output, tostring))
   end
+end
+
+
+function lovebird.map(t, fn)
+  local res = {}
+  for k, v in pairs(t) do res[k] = fn(v) end
+  return res
+end
+
+
+function lovebird.trace(...)
+  local str = "[lovebird] " .. table.concat(lovebird.map({...}, tostring), " ")
+  print(str)
+  if not lovebird.wrapprint then lovebird.print(str) end
+end
+
+
+function lovebird.unescape(str)
+  local f = function(x) return string.char(tonumber("0x"..x)) end
+  return (str:gsub("%+", " "):gsub("%%(..)", f))
 end
 
 
@@ -424,7 +425,7 @@ function lovebird.parseurl(url)
   res.path, res.search = url:match("/([^%?]*)%??(.*)")
   res.query = {}
   for k, v in res.search:gmatch("([^&^?]-)=([^&^#]*)") do
-    res.query[k] = unescape(v)
+    res.query[k] = lovebird.unescape(v)
   end
   return res
 end
@@ -460,7 +461,7 @@ end
 
 
 function lovebird.print(...)
-  local str = table.concat(map({...}, tostring), " ")
+  local str = table.concat(lovebird.map({...}, tostring), " ")
   local last = lovebird.lines[#lovebird.lines]
   if last and str == last.str then
     -- Update last line if this line is a duplicate of it
@@ -489,12 +490,12 @@ function lovebird.print(...)
     end
     return str
   end
-  lovebird.buffer = table.concat(map(lovebird.lines, doline), "<br>")
+  lovebird.buffer = table.concat(lovebird.map(lovebird.lines, doline), "<br>")
 end
 
 
 function lovebird.onerror(err)
-  trace("ERROR:", err)
+  lovebird.trace("ERROR:", err)
 end
 
 
@@ -537,7 +538,7 @@ function lovebird.onconnect(client)
   req.parsedbody = {}
   if req.body then
     for k, v in req.body:gmatch("([^&]-)=([^&^#]*)") do
-      req.parsedbody[k] = unescape(v)
+      req.parsedbody[k] = lovebird.unescape(v)
     end
   end
   -- Parse request line's url
@@ -563,7 +564,7 @@ function lovebird.update()
     if lovebird.checkwhitelist(addr) then 
       xpcall(function() lovebird.onconnect(client) end, function() end)
     else
-      trace("got non-whitelisted connection attempt: ", addr)
+      lovebird.trace("got non-whitelisted connection attempt: ", addr)
       client:close()
     end
   end
