@@ -379,18 +379,19 @@ function lovebird.init()
   end
   -- Compile page templates
   for k, page in pairs(lovebird.pages) do
-    lovebird.pages[k] = lovebird.template(page, "lovebird, req")
+    lovebird.pages[k] = lovebird.template(page, "lovebird, req", 
+                                          "pages." .. k)
   end
   lovebird.inited = true
 end
 
 
-function lovebird.template(str, params)
+function lovebird.template(str, params, chunkname)
   params = params and ("," .. params) or ""
   local f = function(x) return string.format(" echo(%q)", x) end
   str = ("?>"..str.."<?lua"):gsub("%?>(.-)<%?lua", f)
   str = "local echo " .. params .. " = ..." .. str
-  local fn = assert(loadstring(str))
+  local fn = assert(loadstring(str, chunkname))
   return function(...)
     local output = {}
     local echo = function(str) table.insert(output, str) end
