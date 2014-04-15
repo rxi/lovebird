@@ -30,7 +30,7 @@ lovebird.pages["index"] = [[
 -- Handle console input
 if req.parsedbody.input then
   local str = req.parsedbody.input
-  xpcall(function() assert(loadstring(str))() end, lovebird.onerror)
+  xpcall(function() assert(loadstring(str, "input"))() end, lovebird.onerror)
 end
 ?>
 
