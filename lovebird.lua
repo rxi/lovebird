@@ -11,6 +11,7 @@ local socket = require "socket"
 
 local lovebird = { _version = "0.1.0" }
 
+lovebird.loadstring = loadstring or load
 lovebird.inited = false
 lovebird.host = "*"
 lovebird.buffer = ""
@@ -25,12 +26,14 @@ lovebird.whitelist = { "127.0.0.1", "192.168.*.*" }
 lovebird.maxlines = 200
 lovebird.updateinterval = .5
 
+
 lovebird.pages["index"] = [[
 <?lua
 -- Handle console input
 if req.parsedbody.input then
   local str = req.parsedbody.input
-  xpcall(function() assert(loadstring(str, "input"))() end, lovebird.onerror)
+  xpcall(function() assert(lovebird.loadstring(str, "input"))() end,
+         lovebird.onerror)
 end
 ?>
 
@@ -361,8 +364,6 @@ lovebird.pages["env.json"] = [[
 ]]
 
 
-local loadstring = loadstring or load
-
 
 function lovebird.init()
   -- Init server
@@ -391,7 +392,7 @@ function lovebird.template(str, params, chunkname)
   local f = function(x) return string.format(" echo(%q)", x) end
   str = ("?>"..str.."<?lua"):gsub("%?>(.-)<%?lua", f)
   str = "local echo " .. params .. " = ..." .. str
-  local fn = assert(loadstring(str, chunkname))
+  local fn = assert(lovebird.loadstring(str, chunkname))
   return function(...)
     local output = {}
     local echo = function(str) table.insert(output, str) end
