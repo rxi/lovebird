@@ -1,6 +1,8 @@
 # lovebird
 A browser-based debug console for the [LÖVE](http://love2d.org) framework.
 
+![screenshot from 2014-04-16 19 53 57](https://cloud.githubusercontent.com/assets/3920290/2723790/d132d90c-c598-11e3-8ec8-a7184f0c1be9.png)
+
 
 ## Usage
 Drop the [lovebird.lua](lovebird.lua?raw=1) file into an existing project and
