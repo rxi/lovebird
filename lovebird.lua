@@ -346,7 +346,7 @@ lovebird.pages["env.json"] = [[
           table.insert(keys, k)
         end
       end
-      table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+      table.sort(keys, lovebird.compare)
       for _, k in pairs(keys) do 
         local v = t[k]
     ?>
@@ -444,6 +444,18 @@ function lovebird.truncate(str, len)
     return str
   end
   return str:sub(1, len - 3) .. "..."
+end
+
+
+function lovebird.compare(a, b)
+  local na, nb = tonumber(a), tonumber(b)
+  if na then
+    if nb then return na < nb end
+    return false
+  elseif nb then
+    return true
+  end
+  return tostring(a) < tostring(b)
 end
 
 
