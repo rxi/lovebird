@@ -255,7 +255,8 @@ end
           updateDivContent("status", "disconnected &#9675;");
         });
       }
-      setInterval(refreshOutput, <?lua echo(lovebird.updateinterval) ?> * 1000);
+      setInterval(refreshOutput,
+                  <?lua echo(lovebird.updateinterval) ?> * 1000);
 
       /* Environment variable view */
       var envPath = "";
@@ -291,7 +292,7 @@ end
                   k + "</a>";
             }
             var v = "<a href='#' onclick=\"insertVar('" +
-                    fullpath.replace(/\.(-?[0-9])+/g, "[$1]") +
+                    fullpath.replace(/\.(-?[0-9]+)/g, "[$1]") +
                     "');\">" + x.value + "</a>"
             html += "<tr><td>" + k + "</td><td>" + v + "</td></tr>";
           }
