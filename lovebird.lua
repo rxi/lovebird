@@ -476,7 +476,11 @@ end
 
 
 function lovebird.print(...)
-  local str = table.concat(lovebird.map({...}, tostring), " ")
+  local t = {}
+  for i = 1, select("#", ...) do
+    table.insert(t, tostring(select(i, ...)))
+  end
+  local str = table.concat(t, " ")
   local last = lovebird.lines[#lovebird.lines]
   if last and str == last.str then
     -- Update last line if this line is a duplicate of it
