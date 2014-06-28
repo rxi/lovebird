@@ -84,6 +84,10 @@ end
       font-size: 13px;
       color: #606060;
     }
+    .inputline:before {
+      content: '\00B7\00B7\00B7';
+      padding-right: 5px;
+    }
     #header {
       background: #101010;
       height: 25px;
@@ -505,8 +509,7 @@ function lovebird.recalcbuffer()
       str = lovebird.htmlescape(line.str):gsub("\n", "<br>")
     end
     if line.type == "input" then
-      str = '<span class="inputline">&#8729;&#8729;&#8729; ' ..
-            str .. '</span>'
+      str = '<span class="inputline">' .. str .. '</span>'
     else
       if line.count > 1 then
         str = '<span class="repeatcount">' .. line.count .. '</span> ' .. str
