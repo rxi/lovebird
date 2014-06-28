@@ -68,9 +68,9 @@ end
       text-align: center;
       padding-left: 4px;
       padding-right: 4px;
-      padding-top: 1px;
-      padding-bottom: 1px;
-      border-radius: 6px;
+      padding-top: 0px;
+      padding-bottom: 0px;
+      border-radius: 7px;
       display: inline-block;
     }
     .greybordered {
@@ -82,7 +82,7 @@ end
     .inputline {
       font-family: mono, courier;
       font-size: 13px;
-      color: #808080;
+      color: #606060;
     }
     #header {
       background: #101010;
@@ -141,6 +141,7 @@ end
       overflow-y: scroll;
       position: absolute;
       margin: 10px;
+      line-height: 17px;
       top: 0px; bottom: 36px; left: 0px; right: 0px;
     }
     #env {
