@@ -482,25 +482,11 @@ function lovebird.pushline(line)
   if #lovebird.lines > lovebird.maxlines then
     table.remove(lovebird.lines, 1)
   end
+  lovebird.recalcbuffer()
 end
 
 
-function lovebird.print(...)
-  local t = {}
-  for i = 1, select("#", ...) do
-    table.insert(t, tostring(select(i, ...)))
-  end
-  local str = table.concat(t, " ")
-  local last = lovebird.lines[#lovebird.lines]
-  if last and str == last.str then
-    -- Update last line if this line is a duplicate of it
-    last.time = os.time()
-    last.count = last.count + 1
-  else
-    -- Create new line
-    lovebird.pushline({ type = "output", str = str })
-  end
-  -- Build string buffer from lines
+function lovebird.recalcbuffer()
   local function doline(line)
     local str = line.str
     if not lovebird.allowhtml then
@@ -516,6 +502,25 @@ function lovebird.print(...)
     return str
   end
   lovebird.buffer = table.concat(lovebird.map(lovebird.lines, doline), "<br>")
+end
+
+
+function lovebird.print(...)
+  local t = {}
+  for i = 1, select("#", ...) do
+    table.insert(t, tostring(select(i, ...)))
+  end
+  local str = table.concat(t, " ")
+  local last = lovebird.lines[#lovebird.lines]
+  if last and str == last.str then
+    -- Update last line if this line is a duplicate of it
+    last.time = os.time()
+    last.count = last.count + 1
+    lovebird.recalcbuffer()
+  else
+    -- Create new line
+    lovebird.pushline({ type = "output", str = str })
+  end
 end
 
 
