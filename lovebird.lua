@@ -73,6 +73,18 @@ end
       border-radius: 7px;
       display: inline-block;
     }
+    .errormarker {
+      color: #F0F0F0;
+      background: #8E0000;
+      font-size: 11px;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 8px;
+      width: 17px;
+      padding-top: 0px;
+      padding-bottom: 0px;
+      display: inline-block;
+    }
     .greybordered {
       margin: 12px;
       background: #F0F0F0;
@@ -87,6 +99,9 @@ end
     .inputline:before {
       content: '\00B7\00B7\00B7';
       padding-right: 5px;
+    }
+    .errorline {
+      color: #8E0000;
     }
     #header {
       background: #101010;
@@ -388,6 +403,7 @@ function lovebird.init()
   lovebird.addr, lovebird.port = lovebird.server:getsockname()
   lovebird.server:settimeout(0)
   -- Wrap print
+  lovebird.origprint = print
   if lovebird.wrapprint then
     local oldprint = print
     print = function(...)
@@ -511,6 +527,10 @@ function lovebird.recalcbuffer()
     if line.type == "input" then
       str = '<span class="inputline">' .. str .. '</span>'
     else
+      if line.type == "error" then
+        str = '<span class="errormarker">!</span> ' .. str
+        str = '<span class="errorline">' .. str .. '</span>'
+      end
       if line.count > 1 then
         str = '<span class="repeatcount">' .. line.count .. '</span> ' .. str
       end
@@ -545,7 +565,10 @@ end
 
 
 function lovebird.onerror(err)
-  lovebird.trace("ERROR:", err)
+  lovebird.pushline({ type = "error", str = err })
+  if lovebird.wrapprint then
+    lovebird.origprint("[lovebird] ERROR: " .. err)
+  end
 end
 
 
