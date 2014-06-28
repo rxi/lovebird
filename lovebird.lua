@@ -21,6 +21,7 @@ lovebird.pages = {}
 lovebird.wrapprint = true
 lovebird.timestamp = true
 lovebird.allowhtml = false
+lovebird.echoinput = true
 lovebird.port = 8000
 lovebird.whitelist = { "127.0.0.1", "192.168.*.*" }
 lovebird.maxlines = 200
@@ -32,7 +33,9 @@ lovebird.pages["index"] = [[
 -- Handle console input
 if req.parsedbody.input then
   local str = req.parsedbody.input
-  lovebird.pushline({ type = 'input', str = str })
+  if lovebird.echoinput then
+    lovebird.pushline({ type = 'input', str = str })
+  end
   xpcall(function() assert(lovebird.loadstring(str, "input"))() end,
          lovebird.onerror)
 end

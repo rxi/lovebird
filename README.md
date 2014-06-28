@@ -41,6 +41,10 @@ Whether lovebird should wrap the `print()` function or not. If this is true
 then all the calls to print will also be output to lovebird's console. This is
 `true` by default.
 
+### lovebird.echoinput
+Whether lovebird should display inputted commands in the console's output
+buffer; `true` by default.
+
 ### lovebird.maxlines
 The maximum number of lines lovebird should store in its console's output
 buffer. By default this is `200`.
