@@ -475,6 +475,16 @@ function lovebird.clear()
 end
 
 
+function lovebird.pushline(line)
+  line.time = os.time()
+  line.count = 1
+  table.insert(lovebird.lines, line)
+  if #lovebird.lines > lovebird.maxlines then
+    table.remove(lovebird.lines, 1)
+  end
+end
+
+
 function lovebird.print(...)
   local t = {}
   for i = 1, select("#", ...) do
@@ -488,11 +498,7 @@ function lovebird.print(...)
     last.count = last.count + 1
   else
     -- Create new line
-    local line = { str = str, time = os.time(), count = 1 }
-    table.insert(lovebird.lines, line)
-    if #lovebird.lines > lovebird.maxlines then
-      table.remove(lovebird.lines, 1)
-    end
+    lovebird.pushline({ type = "output", str = str })
   end
   -- Build string buffer from lines
   local function doline(line)
