@@ -32,6 +32,7 @@ lovebird.pages["index"] = [[
 -- Handle console input
 if req.parsedbody.input then
   local str = req.parsedbody.input
+  lovebird.pushline({ type = 'input', str = str })
   xpcall(function() assert(lovebird.loadstring(str, "input"))() end,
          lovebird.onerror)
 end
@@ -74,6 +75,11 @@ end
       background: #F0F0F0;
       border: 1px solid #E0E0E0;
       border-radius: 3px;
+    }
+    .inputline {
+      font-family: mono, courier;
+      font-size: 13px;
+      color: #808080;
     }
     #header {
       background: #101010;
@@ -125,6 +131,8 @@ end
     }
     #inputbox {
       width: 100%;
+      font-family: mono, courier;
+      font-size: 13px;
     }
     #output {
       overflow-y: scroll;
@@ -491,6 +499,9 @@ function lovebird.recalcbuffer()
     local str = line.str
     if not lovebird.allowhtml then
       str = lovebird.htmlescape(line.str):gsub("\n", "<br>")
+    end
+    if line.type == "input" then
+      str = '<span class="inputline">&#8729;&#8729;' .. str .. '</span>'
     end
     if line.count > 1 then
       str = '<span class="repeatcount">' .. line.count .. '</span> ' .. str
