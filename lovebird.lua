@@ -504,14 +504,16 @@ function lovebird.recalcbuffer()
       str = lovebird.htmlescape(line.str):gsub("\n", "<br>")
     end
     if line.type == "input" then
-      str = '<span class="inputline">&#8729;&#8729;' .. str .. '</span>'
-    end
-    if line.count > 1 then
-      str = '<span class="repeatcount">' .. line.count .. '</span> ' .. str
-    end
-    if lovebird.timestamp then
-      str = os.date('<span class="timestamp">%H:%M:%S</span> ', line.time) .. 
-            str
+      str = '<span class="inputline">&#8729;&#8729;&#8729; ' ..
+            str .. '</span>'
+    else
+      if line.count > 1 then
+        str = '<span class="repeatcount">' .. line.count .. '</span> ' .. str
+      end
+      if lovebird.timestamp then
+        str = os.date('<span class="timestamp">%H:%M:%S</span> ', line.time) .. 
+              str
+      end
     end
     return str
   end
