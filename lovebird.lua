@@ -208,6 +208,16 @@ end
     <script>
       document.getElementById("inputbox").focus();
 
+      var changeFavicon = function(href) {
+        var old = document.getElementById("favicon");
+        if (old) document.head.removeChild(old);
+        var link = document.createElement("link");
+        link.id = "favicon";
+        link.rel = "shortcut icon";
+        link.href = href;
+        document.head.appendChild(link);
+      }
+
       var truncate = function(str, len) {
         if (str.length <= len) return str;
         return str.substring(0, len - 3) + "...";
@@ -281,9 +291,24 @@ end
             var div = document.getElementById("output"); 
             div.scrollTop = div.scrollHeight;
           }
+          /* Update favicon */
+          changeFavicon("data:image/png;base64," + 
+"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAP1BMVEUAAAAAAAAAAAD////19fUO"+
+"Dg7v7+/h4eGzs7MlJSUeHh7n5+fY2NjJycnGxsa3t7eioqKfn5+QkJCHh4d+fn7zU+b5AAAAAnRS"+
+"TlPlAFWaypEAAABRSURBVBjTfc9HDoAwDERRQ+w0ern/WQkZaUBC4e/mrWzppH9VJjbjZg1Ii2rM"+
+"DyR1JZ8J0dVWggIGggcEwgbYCRbuPRqgyjHNpzUP+39GPu9fgloC5L9DO0sAAAAASUVORK5CYII="
+          );
         },
         function(text) {
           updateDivContent("status", "disconnected &#9675;");
+          /* Update favicon */
+          changeFavicon("data:image/png;base64," + 
+"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAYFBMVEUAAAAAAAAAAADZ2dm4uLgM"+
+"DAz29vbz8/Pv7+/h4eHIyMiwsLBtbW0lJSUeHh4QEBDn5+fS0tLDw8O0tLSioqKfn5+QkJCHh4d+"+
+"fn5ycnJmZmZgYGBXV1dLS0tFRUUGBgZ0He44AAAAAnRSTlPlAFWaypEAAABeSURBVBjTfY9HDoAw"+
+"DAQD6Z3ey/9/iXMxkVDYw0g7F3tJReosUKHnwY4pCM+EtOEVXrb7wVRA0dMbaAcUwiVeDQq1Jp4a"+
+"xUg5kE0ooqZu68Di2Tgbs/DiY/9jyGf+AyFKBAK7KD2TAAAAAElFTkSuQmCC"
+          );
         });
       }
       setInterval(refreshOutput,
