@@ -603,12 +603,15 @@ function lovebird.onrequest(req, client)
   page = page ~= "" and page or "index"
   -- Handle "page not found"
   if not lovebird.pages[page] then 
-    return "HTTP/1.1 404\r\n\r\nBad page"
+    return "HTTP/1.1 404\r\nContent-Length: 8\r\n\r\nBad page"
   end
   -- Handle page
   local str
   xpcall(function()
-    str = "HTTP/1.1 200 OK\r\n\r\n" .. lovebird.pages[page](lovebird, req)
+    local data = lovebird.pages[page](lovebird, req)
+    str = "HTTP/1.1 200 OK\r\n" ..
+          "Content-Length: " .. #data .. "\r\n" ..
+          "\r\n" .. data
   end, lovebird.onerror)
   return str
 end
