@@ -12,10 +12,10 @@ require("lovebird").update()
 ```
 The console can then be accessed by opening the following URL in a web browser:
 ```
-http://localhost:8000
+http://127.0.0.1:8000
 ```
 If you want to access lovebird from another computer on the same network then
-`localhost` should be replaced with the IP address of the computer which LÖVE
+`127.0.0.1` should be replaced with the IP address of the computer which LÖVE
 is running on.
 
 
