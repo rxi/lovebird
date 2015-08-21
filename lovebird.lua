@@ -16,6 +16,7 @@ lovebird.inited = false
 lovebird.host = "*"
 lovebird.buffer = ""
 lovebird.lines = {}
+lovebird.connections = {}
 lovebird.pages = {}
 
 lovebird.wrapprint = true
@@ -614,23 +615,56 @@ function lovebird.onrequest(req, client)
 end
 
 
+function lovebird.receive(client, pattern)
+  while 1 do
+    local data, msg = client:receive(pattern)
+    if not data then
+      if msg == "timeout" then
+        -- Wait for more data
+        coroutine.yield(true)
+      else
+        -- Disconnected -- yielding nil means we're done
+        coroutine.yield(nil)
+      end
+    else
+      return data
+    end
+  end
+end
+
+
+function lovebird.send(client, data)
+  local idx = 1
+  while idx < #data do
+    local res, msg = client:send(data, idx)
+    if not res and msg == "closed" then
+      -- Handle disconnect
+      coroutine.yield(nil)
+    else
+      idx = idx + res
+      coroutine.yield(true)
+    end
+  end
+end
+
+
 function lovebird.onconnect(client)
   -- Create request table
   local requestptn = "(%S*)%s*(%S*)%s*(%S*)"
   local req = {}
   req.socket = client
   req.addr, req.port = client:getsockname()
-  req.request = client:receive()
+  req.request = lovebird.receive(client, "*l")
   req.method, req.url, req.proto = req.request:match(requestptn)
   req.headers = {}
   while 1 do
-    local line = client:receive()
+    local line, msg = lovebird.receive(client, "*l")
     if not line or #line == 0 then break end
     local k, v = line:match("(.-):%s*(.*)$")
     req.headers[k] = v
   end
   if req.headers["Content-Length"] then
-    req.body = client:receive(req.headers["Content-Length"])
+    req.body = lovebird.receive(client, req.headers["Content-Length"])
   end
   -- Parse body
   req.parsedbody = {}
@@ -641,12 +675,9 @@ function lovebird.onconnect(client)
   end
   -- Parse request line's url
   req.parsedurl = lovebird.parseurl(req.url)
-  -- Handle request; get data to send
-  local data, index = lovebird.onrequest(req), 0
-  -- Send data
-  while index < #data do
-    index = index + client:send(data, index)
-  end
+  -- Handle request; get data to send and send
+  local data = lovebird.onrequest(req)
+  lovebird.send(client, data)
   -- Clear up
   client:close()
 end
@@ -654,16 +685,31 @@ end
 
 function lovebird.update()
   if not lovebird.inited then lovebird.init() end 
+  -- Handle new connections
   while 1 do
+    -- Accept new connections
     local client = lovebird.server:accept()
     if not client then break end
-    client:settimeout(2)
+    client:settimeout(0)
     local addr = client:getsockname()
     if lovebird.checkwhitelist(addr) then 
-      xpcall(function() lovebird.onconnect(client) end, function() end)
+      -- Connection okay -- create and add coroutine to set
+      local conn = coroutine.wrap(function()
+        xpcall(function() lovebird.onconnect(client) end, function() end)
+      end)
+      lovebird.connections[conn] = true
     else
+      -- Reject connection not on whitelist
       lovebird.trace("got non-whitelisted connection attempt: ", addr)
       client:close()
+    end
+  end
+  -- Handle existing connections
+  for conn in pairs(lovebird.connections) do
+    -- Resume coroutine, remove if it has finished
+    local status = conn()
+    if status == nil then
+      lovebird.connections[conn] = nil
     end
   end
 end
