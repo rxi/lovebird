@@ -380,7 +380,7 @@ lovebird.pages["env.json"] = [[
 <?lua 
   local t = _G
   local p = req.parsedurl.query.p or ""
-  p = p:gsub("%.+", "%."):match("^[%.]*(.*)[%.]*$")
+  p = p:gsub("%.+", "."):match("^[%.]*(.*)[%.]*$")
   if p ~= "" then
     for x in p:gmatch("[^%.]+") do
       t = t[x] or t[tonumber(x)]
