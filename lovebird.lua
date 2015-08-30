@@ -37,6 +37,9 @@ if req.parsedbody.input then
   if lovebird.echoinput then
     lovebird.pushline({ type = 'input', str = str })
   end
+  if str:find("^=") then
+    str = "print(" .. str:sub(2) .. ")"
+  end
   xpcall(function() assert(lovebird.loadstring(str, "input"))() end,
          lovebird.onerror)
 end
