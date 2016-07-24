@@ -14,9 +14,10 @@ The console can then be accessed by opening the following URL in a web browser:
 ```
 http://127.0.0.1:8000
 ```
-If you want to access lovebird from another computer on the same network then
-`127.0.0.1` should be replaced with the IP address of the computer which LÖVE
-is running on.
+If you want to access lovebird from another computer then `127.0.0.1` should be
+replaced with the IP address of the computer which LÖVE is running on; the IP
+address of the other computer should be added to the
+[lovebird.whitelist](#lovebirdwhitelist) table.
 
 
 ## Additional Functionality
@@ -34,7 +35,8 @@ The port which lovebird listens for connections on. By default this is `8000`
 A table of hosts which lovebird will accept connections from. Any connection
 made from a host which is not on the whitelist is logged and closed
 immediately. If `lovebird.whitelist` is set to nil then all connections are
-accepted. The default is `{ "127.0.0.1", "192.168.*.*" }`.
+accepted. The default is `{ "127.0.0.1" }`. To allow *all* computers on the
+local network access to lovebird, `"192.168.*.*"` can be added to this table.
 
 ### lovebird.wrapprint
 Whether lovebird should wrap the `print()` function or not. If this is true
@@ -64,4 +66,3 @@ true this function is automatically called when print() is called.
 
 ### lovebird.clear()
 Clears the contents of the console, returning it to an empty state.
-

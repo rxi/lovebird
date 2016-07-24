@@ -24,7 +24,7 @@ lovebird.timestamp = true
 lovebird.allowhtml = false
 lovebird.echoinput = true
 lovebird.port = 8000
-lovebird.whitelist = { "127.0.0.1", "192.168.*.*" }
+lovebird.whitelist = { "127.0.0.1" }
 lovebird.maxlines = 200
 lovebird.updateinterval = .5
 
@@ -51,7 +51,7 @@ end
   <meta http-equiv="x-ua-compatible" content="IE=Edge"/>
   <title>lovebird</title>
   <style>
-    body { 
+    body {
       margin: 0px;
       font-size: 14px;
       font-family: helvetica, verdana, sans;
@@ -197,7 +197,7 @@ end
       <div id="console" class="greybordered">
         <div id="output"> <?lua echo(lovebird.buffer) ?> </div>
         <div id="input">
-          <form method="post" 
+          <form method="post"
                 onkeydown="return onInputKeyDown(event);"
                 onsubmit="onInputSubmit(); return false;">
             <input id="inputbox" name="input" type="text"></input>
@@ -292,11 +292,11 @@ end
         geturl("/buffer", function(text) {
           updateDivContent("status", "connected &#9679;");
           if (updateDivContent("output", text)) {
-            var div = document.getElementById("output"); 
+            var div = document.getElementById("output");
             div.scrollTop = div.scrollHeight;
           }
           /* Update favicon */
-          changeFavicon("data:image/png;base64," + 
+          changeFavicon("data:image/png;base64," +
 "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAP1BMVEUAAAAAAAAAAAD////19fUO"+
 "Dg7v7+/h4eGzs7MlJSUeHh7n5+fY2NjJycnGxsa3t7eioqKfn5+QkJCHh4d+fn7zU+b5AAAAAnRS"+
 "TlPlAFWaypEAAABRSURBVBjTfc9HDoAwDERRQ+w0ern/WQkZaUBC4e/mrWzppH9VJjbjZg1Ii2rM"+
@@ -306,7 +306,7 @@ end
         function(text) {
           updateDivContent("status", "disconnected &#9675;");
           /* Update favicon */
-          changeFavicon("data:image/png;base64," + 
+          changeFavicon("data:image/png;base64," +
 "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAYFBMVEUAAAAAAAAAAADZ2dm4uLgM"+
 "DAz29vbz8/Pv7+/h4eHIyMiwsLBtbW0lJSUeHh4QEBDn5+fS0tLDw8O0tLSioqKfn5+QkJCHh4d+"+
 "fn5ycnJmZmZgYGBXV1dLS0tFRUUGBgZ0He44AAAAAnRSTlPlAFWaypEAAABeSURBVBjTfY9HDoAw"+
@@ -321,7 +321,7 @@ end
       /* Environment variable view */
       var envPath = "";
       var refreshEnv = function() {
-        geturl("/env.json?p=" + envPath, function(text) { 
+        geturl("/env.json?p=" + envPath, function(text) {
           var json = eval("(" + text + ")");
 
           /* Header */
@@ -360,7 +360,7 @@ end
           updateDivContent("envvars", html);
         });
       }
-      var setEnvPath = function(p) { 
+      var setEnvPath = function(p) {
         envPath = p;
         refreshEnv();
       }
@@ -380,7 +380,7 @@ lovebird.pages["buffer"] = [[ <?lua echo(lovebird.buffer) ?> ]]
 
 
 lovebird.pages["env.json"] = [[
-<?lua 
+<?lua
   local t = _G
   local p = req.parsedurl.query.p or ""
   p = p:gsub("%.+", "."):match("^[%.]*(.*)[%.]*$")
@@ -399,20 +399,20 @@ lovebird.pages["env.json"] = [[
   "valid": true,
   "path": "<?lua echo(p) ?>",
   "vars": [
-    <?lua 
+    <?lua
       local keys = {}
-      for k in pairs(t) do 
+      for k in pairs(t) do
         if type(k) == "number" or type(k) == "string" then
           table.insert(keys, k)
         end
       end
       table.sort(keys, lovebird.compare)
-      for _, k in pairs(keys) do 
+      for _, k in pairs(keys) do
         local v = t[k]
     ?>
-      { 
+      {
         "key": "<?lua echo(k) ?>",
-        "value": <?lua echo( 
+        "value": <?lua echo(
                           string.format("%q",
                             lovebird.truncate(
                               lovebird.htmlescape(
@@ -442,7 +442,7 @@ function lovebird.init()
   end
   -- Compile page templates
   for k, page in pairs(lovebird.pages) do
-    lovebird.pages[k] = lovebird.template(page, "lovebird, req", 
+    lovebird.pages[k] = lovebird.template(page, "lovebird, req",
                                           "pages." .. k)
   end
   lovebird.inited = true
@@ -564,7 +564,7 @@ function lovebird.recalcbuffer()
         str = '<span class="repeatcount">' .. line.count .. '</span> ' .. str
       end
       if lovebird.timestamp then
-        str = os.date('<span class="timestamp">%H:%M:%S</span> ', line.time) .. 
+        str = os.date('<span class="timestamp">%H:%M:%S</span> ', line.time) ..
               str
       end
     end
@@ -605,7 +605,7 @@ function lovebird.onrequest(req, client)
   local page = req.parsedurl.path
   page = page ~= "" and page or "index"
   -- Handle "page not found"
-  if not lovebird.pages[page] then 
+  if not lovebird.pages[page] then
     return "HTTP/1.1 404\r\nContent-Length: 8\r\n\r\nBad page"
   end
   -- Handle page
@@ -689,7 +689,7 @@ end
 
 
 function lovebird.update()
-  if not lovebird.inited then lovebird.init() end 
+  if not lovebird.inited then lovebird.init() end
   -- Handle new connections
   while 1 do
     -- Accept new connections
@@ -697,7 +697,7 @@ function lovebird.update()
     if not client then break end
     client:settimeout(0)
     local addr = client:getsockname()
-    if lovebird.checkwhitelist(addr) then 
+    if lovebird.checkwhitelist(addr) then
       -- Connection okay -- create and add coroutine to set
       local conn = coroutine.wrap(function()
         xpcall(function() lovebird.onconnect(client) end, function() end)
