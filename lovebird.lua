@@ -200,7 +200,8 @@ end
           <form method="post"
                 onkeydown="return onInputKeyDown(event);"
                 onsubmit="onInputSubmit(); return false;">
-            <input id="inputbox" name="input" type="text"></input>
+            <input id="inputbox" name="input" type="text"
+                autocomplete="off"></input>
           </form>
         </div>
       </div>
