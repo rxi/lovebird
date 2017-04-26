@@ -497,7 +497,7 @@ end
 
 
 function lovebird.htmlescape(str)
-  return str:gsub("<", "&lt;")
+  return ( str:gsub("<", "&lt;") )
 end
 
 
