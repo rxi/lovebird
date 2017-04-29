@@ -49,6 +49,7 @@ end
 <html>
   <head>
   <meta http-equiv="x-ua-compatible" content="IE=Edge"/>
+  <meta charset="utf-8">
   <title>lovebird</title>
   <style>
     body {
@@ -613,7 +614,12 @@ function lovebird.onrequest(req, client)
   local str
   xpcall(function()
     local data = lovebird.pages[page](lovebird, req)
+    local contenttype = "text/html"
+    if string.match(page, "%.json$") then
+      contenttype = "application/json"
+    end
     str = "HTTP/1.1 200 OK\r\n" ..
+          "Content-Type: " .. contenttype .. "\r\n" ..
           "Content-Length: " .. #data .. "\r\n" ..
           "\r\n" .. data
   end, lovebird.onerror)
