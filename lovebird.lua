@@ -49,6 +49,7 @@ end
 <html>
   <head>
   <meta http-equiv="x-ua-compatible" content="IE=Edge"/>
+  <meta charset="utf-8">
   <title>lovebird</title>
   <style>
     body {
