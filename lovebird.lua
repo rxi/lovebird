@@ -497,8 +497,15 @@ function lovebird.parseurl(url)
 end
 
 
+local htmlescapemap = {
+  ["<"] = "&lt;",
+  ["&"] = "&amp;",
+  ['"'] = "&quot;",
+  ["'"] = "&#039;",
+}
+
 function lovebird.htmlescape(str)
-  return ( str:gsub("<", "&lt;") )
+  return ( str:gsub("[<&\"']", htmlescapemap) )
 end
 
 
