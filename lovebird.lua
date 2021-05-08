@@ -9,9 +9,10 @@
 
 local socket = require "socket"
 
-local lovebird = { _version = "0.4.3" }
+local lovebird = { _version = "0.4.4" }
 
 lovebird.loadstring = loadstring or load
+lovebird.loadstringAlt = lovebird.loadString
 lovebird.inited = false
 lovebird.host = "*"
 lovebird.buffer = ""
@@ -40,7 +41,7 @@ if req.parsedbody.input then
   if str:find("^=") then
     str = "print(" .. str:sub(2) .. ")"
   end
-  xpcall(function() assert(lovebird.loadstring(str, "input"))() end,
+  xpcall(function() assert(lovebird.loadstringAlt(str, "input"))() end,
          lovebird.onerror)
 end
 ?>
@@ -426,7 +427,14 @@ lovebird.pages["env.json"] = [[
 }
 ]]
 
-
+if (fennel) then
+   lovebird.loadstringAlt =  function (str, other)
+      local compiled = fennel["compile-string"](str)
+      local ret = loadstring(compiled)
+      print (fennel.view(ret()))
+      return ret
+   end
+end
 
 function lovebird.init()
   -- Init server
